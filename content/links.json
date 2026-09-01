@@ -1,0 +1,6 @@
+{
+  "leadMagnet": "https://unfairedge.gumroad.com/l/atspack",
+  "product": "https://unfairedge.gumroad.com/l/zpydx",
+  "keyword": "PACK",
+  "_note": "The link lives here and nowhere else. build.mjs substitutes it into every video's description, pinned comment and caption, so changing it once changes every video from then on. Paste the free $0 Gumroad product URL into leadMagnet when it exists."
+}

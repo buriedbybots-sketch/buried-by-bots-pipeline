@@ -1,0 +1,72 @@
+{
+  "id": "sample",
+  "title": "You weren't rejected. You were ranked #340.",
+  "music": null,
+  "scenes": [
+    {
+      "type": "hook",
+      "vo": "You didn't get rejected. You got ranked.",
+      "text": "YOU DIDN'T GET REJECTED. YOU GOT RANKED.",
+      "accent": "RANKED"
+    },
+    {
+      "type": "rank",
+      "vo": "A recruiter with four hundred applicants doesn't read four hundred resumes. They search three keywords, get a ranked list, and work down from the top. You came back at three forty.",
+      "to": 340,
+      "total": 400,
+      "caption": "applicants"
+    },
+    {
+      "type": "hook",
+      "vo": "Nobody rejected you. Nobody ever opened it.",
+      "text": "NOBODY REJECTED YOU. NOBODY EVER OPENED IT.",
+      "accent": "OPENED"
+    },
+    {
+      "type": "stat",
+      "vo": "And here's the part that should annoy you. Forty three percent of the resumes that fail never failed on content. They failed on formatting.",
+      "value": 43,
+      "suffix": "%",
+      "label": "of parsing failures are caused by formatting, not content",
+      "source": "ResumeAdapter, 10,000 scans, Q1 2026"
+    },
+    {
+      "type": "test",
+      "vo": "Before you apply again, do this. Copy your resume. Paste it into a blank notepad file.",
+      "kicker": "60-SECOND TEST",
+      "step": "PASTE YOUR RESUME INTO A BLANK NOTEPAD FILE",
+      "result": "IF IT SCRAMBLES, THAT'S WHAT THE MACHINE SEES"
+    },
+    {
+      "type": "prompt",
+      "vo": "So run this before you apply again. Paste your resume in, and it flags every thing that breaks the parser.",
+      "title": "PROMPT 5 — THE FORMAT CLEANER",
+      "lines": [
+        "Act as an ATS parser. Review my resume",
+        "formatting below and flag anything that",
+        "could cause a parsing error or rank me",
+        "lower: multi-column layouts, tables, text",
+        "in headers/footers, graphics, non-standard",
+        "section titles. Then give me a clean,",
+        "single-column structure that parses",
+        "reliably.",
+        "",
+        "MY RESUME: [PASTE]"
+      ]
+    },
+    {
+      "type": "cta",
+      "vo": "Four more like it in the free pack. Comment the word pack and I'll send it.",
+      "text": "FREE PROMPT PACK",
+      "keyword": "PACK"
+    }
+  ],
+  "caption": "Nobody rejected you. You were ranked #340 of 400 and a human only ever looks at page one.\n\n43% of parsing failures are formatting, not content (ResumeAdapter, 10k scans, Q1 2026).\n\nPrompt 5 of 25. Comment PACK and I will send you the free five.",
+  "pinned": "Free 5-prompt pack (no upsell in it): [LEAD MAGNET LINK]",
+  "description": "The ATS did not reject you. It ranked you, and a human only ever looks at page one. Prompt 5 of 25 from the free pack.",
+  "hashtags": [
+    "#resumetips",
+    "#atsresume",
+    "#jobsearch2026"
+  ]
+}

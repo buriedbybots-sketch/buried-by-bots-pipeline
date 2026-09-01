@@ -1,0 +1,82 @@
+name: daily short
+
+on:
+  schedule:
+    # 13:00 UTC = 6:30 PM IST = 9:00 AM ET, the US morning window from the
+    # 30-day plan. GitHub runs cron late under load — treat this as "sometime
+    # in the next hour", not a broadcast slot.
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Sheet row to build (YYYY-MM-DD). Blank = today.'
+        required: false
+      privacy:
+        description: 'private | unlisted | public'
+        required: false
+        default: private
+
+jobs:
+  short:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Pick the date
+        id: d
+        run: echo "date=${{ inputs.date || '' }}" >> "$GITHUB_OUTPUT"
+
+      - run: npm ci
+      - run: pip install edge-tts
+
+      # Remotion drives headless Chrome; these are the shared libraries it needs
+      # on a bare ubuntu runner.
+      - name: Chrome libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnss3 libdbus-1-3 libatk1.0-0 libatk-bridge2.0-0 \
+            libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 \
+            libxrandr2 libgbm1 libpango-1.0-0 libcairo2 libasound2t64
+
+      - name: Fetch the script from the sheet
+        env:
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+        run: node scripts/sheet.mjs ${{ steps.d.outputs.date }}
+
+      - name: Voice and render
+        run: node scripts/build.mjs ${{ steps.d.outputs.date }}
+
+      - name: Upload to YouTube
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          PRIVACY: ${{ inputs.privacy || 'private' }}
+        run: node scripts/upload.mjs ${{ steps.d.outputs.date }}
+
+      # Runs even if the YouTube upload failed — a broken upload is exactly when
+      # you most want the file on your phone so you can post both by hand.
+      - name: Send to phone
+        if: always()
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+        run: node scripts/deliver.mjs ${{ steps.d.outputs.date }}
+
+      # Keep the file whatever happens — if the upload step fails you still have
+      # a finished video to post by hand.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: short-${{ steps.d.outputs.date || 'today' }}
+          path: out/*.mp4
+          retention-days: 14
