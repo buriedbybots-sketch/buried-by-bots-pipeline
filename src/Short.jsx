@@ -182,8 +182,15 @@ const Captions = ({words}) => {
   const ms = (frame / fps) * 1000;
   const lines = useMemo(() => captionLines(words), [words]);
 
-  const idx = words.findIndex((w) => ms >= w.t && ms < w.t + w.d + 120);
-  const cur = idx === -1 ? (ms < (words[0]?.t ?? 0) ? 0 : words.length - 1) : idx;
+  // The last word that has started. Never search for a word *containing* ms:
+  // edge-tts leaves gaps between words, and on every gap the old lookup fell
+  // through to words.length - 1 and flashed the scene's final caption line —
+  // visible several times in every scene.
+  let cur = 0;
+  for (let i = 0; i < words.length; i++) {
+    if (ms >= words[i].t) cur = i;
+    else break;
+  }
   const line = lines.find((l) => l.includes(words[cur]));
   if (!line) return null;
 
