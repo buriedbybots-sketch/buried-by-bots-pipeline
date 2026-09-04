@@ -271,6 +271,9 @@ export const Short = ({content, audio}) => {
           SETTLED..SETTLED+TAIL instead — every word landed, nothing moving. */}
       <Sequence from={body} durationInFrames={TAIL_FRAMES}>
         <Sequence from={-SETTLED} durationInFrames={SETTLED + TAIL_FRAMES}>
+          {/* the hook's backdrop too, or the last half second drops the photo
+              and the loop point flashes to a bare grid */}
+          {content.scenes[0].photoFile ? <Backdrop file={content.scenes[0].photoFile} /> : null}
           <First {...content.scenes[0]} />
         </Sequence>
         <Scan />
