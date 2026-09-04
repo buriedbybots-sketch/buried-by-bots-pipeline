@@ -29,8 +29,9 @@ personality.",,,,,,,,
 2026-08-29,5,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,,PACK,,,,,,
 2026-08-30,1,hook,The recruiter already told you the interview questions.,THE RECRUITER ALREADY TOLD YOU THE INTERVIEW QUESTIONS.,ALREADY,,,,,,,,,,,,,,,,,,
 2026-08-30,2,hook,It's called the job description.,IT'S CALLED THE JOB DESCRIPTION.,DESCRIPTION,,,,,,,,,,,,,,,,,,
-2026-08-30,3,test,Go back to the posting and read the requirements section again. Every single line in there is something a human has to check in the room.,READ THE REQUIREMENTS SECTION AGAIN,,30-SECOND TEST,,,,,,EVERY BULLET IS A QUESTION THEY HAVE TO ASK,,,,,,,,,,,
-2026-08-30,4,prompt,"This turns the posting into the actual question list, and tells you what each one is really testing.",,,,,,,,,,,PROMPT 16 — THE LIKELY-QUESTIONS GENERATOR,"You are the hiring manager for this role.
+2026-08-30,3,rejection,"Skip that list, and this is the email that comes back. Four twelve in the morning. Nobody was awake when it sent.",,,,,,,,,,,,,,,Northwind,,,Tue 4:12 AM,,
+2026-08-30,4,test,Go back to the posting and read the requirements section again. Every single line in there is something a human has to check in the room.,READ THE REQUIREMENTS SECTION AGAIN,,30-SECOND TEST,,,,,,EVERY BULLET IS A QUESTION THEY HAVE TO ASK,,,,,,,,,,,
+2026-08-30,5,prompt,"This turns the posting into the actual question list, and tells you what each one is really testing.",,,,,,,,,,,PROMPT 16 — THE LIKELY-QUESTIONS GENERATOR,"You are the hiring manager for this role.
 Based on the job description below, generate
 the 12 most likely interview questions,
 grouped into: behavioral, technical/role-
@@ -39,7 +40,7 @@ For each, add one line on what the
 interviewer is really trying to learn.
 
 JOB DESCRIPTION: [PASTE]",,,,,,,,
-2026-08-30,5,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,,PACK,,,,,,
+2026-08-30,6,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,,PACK,,,,,,
 2026-08-31,1,hook,One referral skips the whole pile.,ONE REFERRAL SKIPS THE WHOLE PILE.,SKIPS,,,,,,,,,,,,,,,,,,
 2026-08-31,2,stat,The average opening takes more than three hundred applications to fill one seat. You are not competing for attention. You are queuing for it.,,,,,,,300,+,applications per hire at the average company,"Jobscan, via ApplyMate",,,,,,,,,,
 2026-08-31,3,rank,"A referral doesn't rank higher in that queue. It goes around it. Someone inside the company hands your name to the recruiter, and you skip the sort entirely.",,,,340,400,applicants,,,,,,,,,,,,,,
@@ -53,9 +54,10 @@ under 5 sentences. Friendly, not
 transactional.",,,,,,,,
 2026-08-31,5,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,,PACK,,,,,,
 2026-09-01,1,hook,You have the story. You just don't have it in the shape they score.,YOU HAVE THE STORY. NOT IN THE SHAPE THEY SCORE.,SHAPE,,,,,,,,,,,,,,,,,,
-2026-09-01,2,test,"Try it right now. Say your best work story out loud and time it. If you went past ninety seconds, they stopped listening somewhere in the middle.",SAY YOUR BEST WORK STORY OUT LOUD. TIME IT.,,90-SECOND TEST,,,,,,PAST 90 SECONDS? THEY STOPPED LISTENING,,,,,,,,,,,
-2026-09-01,3,hook,"Situation, task, action, result. Under ninety seconds, with a number at the end. That's the behavioral rubric they're scoring against.",SITUATION. TASK. ACTION. RESULT.,RESULT,,,,,,,,,,,,,,,,,,
-2026-09-01,4,prompt,"This builds it from the messy version, and if there's no real result it asks you a question instead of inventing one.",,,,,,,,,,,PROMPT 17 — THE STAR STORY BUILDER,"Help me build a STAR-method answer
+2026-09-01,2,rejection,"Miss the shape, and this is what lands the next morning. Same wording every company uses.",,,,,,,,,,,,,,,Northwind,,,Wed 4:12 AM,,
+2026-09-01,3,test,"Try it right now. Say your best work story out loud and time it. If you went past ninety seconds, they stopped listening somewhere in the middle.",SAY YOUR BEST WORK STORY OUT LOUD. TIME IT.,,90-SECOND TEST,,,,,,PAST 90 SECONDS? THEY STOPPED LISTENING,,,,,,,,,,,
+2026-09-01,4,hook,"Situation, task, action, result. Under ninety seconds, with a number at the end. That's the behavioral rubric they're scoring against.",SITUATION. TASK. ACTION. RESULT.,RESULT,,,,,,,,,,,,,,,,,,
+2026-09-01,5,prompt,"This builds it from the messy version, and if there's no real result it asks you a question instead of inventing one.",,,,,,,,,,,PROMPT 17 — THE STAR STORY BUILDER,"Help me build a STAR-method answer
 (Situation, Task, Action, Result) from the
 rough story below. Keep it under 90 seconds
 spoken. Make the Result concrete. If I'm
@@ -64,4 +66,4 @@ to draw it out rather than inventing one.
 
 THE ROUGH STORY: [PASTE what happened]
 THE QUESTION IT ANSWERS: [PASTE]",,,,,,,,
-2026-09-01,5,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,,PACK,,,,,,
+2026-09-01,6,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,,PACK,,,,,,

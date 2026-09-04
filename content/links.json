@@ -20,5 +20,13 @@
     "r/resumes",
     "r/recruitinghell"
   ],
-  "_note2": "baseTags are merged after each video's own hashtags into the YouTube tags, inside the 500-char cap. communities is the default seeding-pack trio when the sheet row leaves `communities` blank."
+  "_note2": "baseTags are merged after each video's own hashtags into the YouTube tags, inside the 500-char cap. communities is the default seeding-pack trio when the sheet row leaves `communities` blank.",
+  "photos": {
+    "hook": "skyscraper glass night @buildings",
+    "test": "keyboard macro dark @computer",
+    "stat": "city skyline night @buildings",
+    "rank": "documents paper stack @business",
+    "cta": "circuit board macro @computer"
+  },
+  "_note3": "photos: default Pixabay search per scene type when a row's photo cell is blank, as `term @category` (category is one of Pixabay's: computer, buildings, business, backgrounds, industry, places, science). Objects only, never people — the channel is faceless. `none` in the cell = no backdrop. Card scenes (prompt, terminal, posting, rejection, comp, market) never get one."
 }

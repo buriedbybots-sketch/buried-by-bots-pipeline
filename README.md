@@ -129,9 +129,12 @@ To use a real track, drop it in `public/music/` and put its filename in the `mus
 
 ## Stock photo backdrops
 
-Optional. Put a Pixabay search term (`empty office desk night`) or a numeric Pixabay image id in a scene's `photo` cell and set `PIXABAY_KEY` (free API key; a GitHub Secret in CI). The image is fetched once into `public/photos/` and rendered greyscale, dim, drifting slowly, and faded to black where the captions sit — texture that says a person cut this, not an image the viewer reads. If the first search hit has a logo in it, find one on pixabay.com and use its id instead. No key → no backdrop, the scene renders as before.
+On by default for every `hook`, `test`, `stat`, `rank` and `cta` scene. With `PIXABAY_KEY` set (free API key; `.env` locally, a GitHub Secret in CI) the build fetches one photo per scene into `public/photos/` and renders it as a black-and-orange duotone with film grain, drifting slowly, faded to black where the captions sit. It is what makes the videos read as cut by a person rather than generated. No key → no backdrops, everything else renders as before.
 
-Use it sparingly and never on the artifact scenes; the whole point of those frames is that they are a specific piece of software, not a mood. Search for objects, not people (`empty desk`, `keyboard`, `office window night`): the channel is faceless, and a stock face is still a face.
+- A blank `photo` cell uses the default term for that scene type from `photos` in `content/links.json`, written as `term @category` (`keyboard macro dark @computer`). The category is Pixabay's own and is the only thing that keeps a fish out of a keyboard search. The pick rotates by date so consecutive videos don't share a photo.
+- Put your own term, `term @category`, or a numeric Pixabay image id in the cell to override. `none` switches it off for that scene.
+- Card scenes (`prompt`, `terminal`, `posting`, `rejection`, `comp`, `market`) never get one. The card is the frame.
+- **Objects only, never people.** The channel is faceless and a stock face is still a face. Defaults are buildings, keyboards, circuit boards and paper. Check `npm run stills` before a new term goes into rotation.
 
 ## The scheduled version
 

@@ -60,10 +60,18 @@ const Grid = () => {
 // dim, drifting slowly, fading into the void where the captions sit. It is
 // texture that says "a person cut this", not an image the viewer is meant to
 // read — the scene on top still does the talking.
+//
+// Graded to a black-and-orange duotone (grayscale → sepia → hue toward the
+// brand orange) with a touch of film grain, so a stock photo reads as a
+// deliberate look rather than a photo someone pasted under the text.
+const GRAIN =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E\")";
+
 const Backdrop = ({file}) => {
   const frame = useCurrentFrame();
   const {durationInFrames} = useVideoConfig();
-  const zoom = interpolate(frame, [0, durationInFrames], [1.04, 1.12]);
+  const zoom = interpolate(frame, [0, durationInFrames], [1.04, 1.14]);
+  const drift = interpolate(frame, [0, durationInFrames], [0, -18]);
   return (
     <AbsoluteFill>
       <Img
@@ -72,13 +80,26 @@ const Backdrop = ({file}) => {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          filter: 'grayscale(1) contrast(1.15) brightness(0.55)',
-          opacity: 0.32,
-          transform: `scale(${zoom})`,
+          filter: 'grayscale(1) sepia(0.6) hue-rotate(-28deg) saturate(2.2) contrast(1.25) brightness(0.5)',
+          opacity: 0.42,
+          transform: `scale(${zoom}) translateY(${drift}px)`,
+        }}
+      />
+      {/* grain: shifts every few frames so it flickers like film, not like a texture */}
+      <AbsoluteFill
+        style={{
+          backgroundImage: GRAIN,
+          backgroundPosition: `${(frame * 37) % 300}px ${(frame * 53) % 300}px`,
+          opacity: 0.12,
+          mixBlendMode: 'overlay',
         }}
       />
       <AbsoluteFill
-        style={{background: `linear-gradient(rgba(15,17,21,0.35) 0%, rgba(15,17,21,0.15) 45%, ${C.void} 82%)`}}
+        style={{
+          background:
+            `radial-gradient(ellipse at 50% 40%, transparent 30%, rgba(15,17,21,0.55) 100%),` +
+            `linear-gradient(rgba(15,17,21,0.3) 0%, rgba(15,17,21,0.05) 40%, ${C.void} 82%)`,
+        }}
       />
     </AbsoluteFill>
   );
