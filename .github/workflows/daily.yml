@@ -52,7 +52,11 @@ jobs:
           SHEET_ID: ${{ secrets.SHEET_ID }}
         run: node scripts/sheet.mjs ${{ steps.d.outputs.date }}
 
-      - name: Voice and render
+      # PIXABAY_KEY is optional: scenes with a `photo` cell get a stock backdrop
+      # when it's set and render without one when it isn't.
+      - name: Lint, voice and render
+        env:
+          PIXABAY_KEY: ${{ secrets.PIXABAY_KEY }}
         run: node scripts/build.mjs ${{ steps.d.outputs.date }}
 
       - name: Upload to YouTube
@@ -78,5 +82,9 @@ jobs:
         if: always()
         with:
           name: short-${{ steps.d.outputs.date || 'today' }}
-          path: out/*.mp4
+          path: |
+            out/*.mp4
+            out/*.cover.jpg
+            out/*.post.txt
+            out/*.meta.json
           retention-days: 14

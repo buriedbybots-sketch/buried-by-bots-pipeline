@@ -1,0 +1,32 @@
+name: weekly geography
+
+# Where did the week's views come from? This is the number the whole
+# US-targeting design is judged against. Monday 14:00 UTC, after the daily
+# short has gone out; Analytics data lags ~2 days so the window is last week.
+on:
+  schedule:
+    - cron: '0 14 * * 1'
+  workflow_dispatch:
+    inputs:
+      days:
+        description: 'Window in days'
+        required: false
+        default: '7'
+
+jobs:
+  geo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Viewer geography
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+        run: node scripts/geo.mjs ${{ inputs.days || 7 }}
