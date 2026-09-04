@@ -1,12 +1,20 @@
 // The original six: the brand's own visual language.
 import React from 'react';
-import {interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import {C} from '../theme.js';
 import {ease, center, kicker, chip, Source} from './ui.jsx';
 
+// The shared `ease` is heavily overdamped — good for cards settling into
+// place, wrong for the first thing a thumb sees. On an eight-word line the
+// old hook (3-frame stagger + `ease`) was not legible until frame 45: a
+// second and a half of an empty screen at the exact moment the swipe is
+// decided. This one is readable by frame 9 and settled by 14.
+const snap = (frame, fps, delay = 0) =>
+  spring({frame: frame - delay, fps, config: {damping: 26, mass: 0.35, stiffness: 260}});
+
 // ---------------------------------------------------------------- hook
 // Words spring in on a stagger; the accent word gets the one orange and an
-// underline swipe. This is the first 2 seconds, so it has to move immediately.
+// underline swipe. This is the first second, so it has to be readable at once.
 export const Hook = ({text, accent, head}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
@@ -14,10 +22,12 @@ export const Hook = ({text, accent, head}) => {
 
   return (
     <div style={{...center, padding: '0 90px'}}>
-      {head ? <div style={{...kicker, marginBottom: 44}}>{head}</div> : null}
+      {head ? (
+        <div style={{...kicker, marginBottom: 44, opacity: Math.min(1, snap(frame, fps))}}>{head}</div>
+      ) : null}
       <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0 26px'}}>
         {words.map((w, i) => {
-          const s = ease(frame, fps, i * 3);
+          const s = snap(frame, fps, i);
           const hit = accent && w.replace(/[^A-Za-z']/g, '').toUpperCase() === accent.toUpperCase();
           return (
             <span
@@ -28,8 +38,9 @@ export const Hook = ({text, accent, head}) => {
                 lineHeight: 1.02,
                 letterSpacing: '-0.5px',
                 color: hit ? C.orange : C.paper,
-                opacity: s,
-                transform: `translateY(${(1 - s) * 44}px)`,
+                // the spring overshoots past 1; opacity and blur must not
+                opacity: Math.min(1, s),
+                transform: `translateY(${(1 - Math.min(1, s)) * 30}px)`,
                 position: 'relative',
               }}
             >
@@ -42,7 +53,7 @@ export const Hook = ({text, accent, head}) => {
                     bottom: -14,
                     height: 10,
                     background: C.orange,
-                    width: `${interpolate(frame - i * 3 - 8, [0, 12], [0, 100], {
+                    width: `${interpolate(frame - i - 5, [0, 8], [0, 100], {
                       extrapolateLeft: 'clamp',
                       extrapolateRight: 'clamp',
                     })}%`,
@@ -65,13 +76,20 @@ export const Rank = ({to = 340, total = 400, caption = 'applicants'}) => {
   const {durationInFrames} = useVideoConfig();
 
   const ROW = 108;
-  const settle = Math.min(durationInFrames * 0.62, 62);
+  // The count used to be capped at 62 frames however long the scene ran, so an
+  // eleven-second rank scene spent eight and a half of them frozen on #340.
+  // Scale it to the scene instead: the counter is still fast at the start and
+  // decelerating at the end, but it is moving for two thirds of the shot.
+  const settle = Math.max(45, durationInFrames * 0.66);
   const pos = interpolate(frame, [0, settle], [0, to], {
     extrapolateRight: 'clamp',
     easing: (t) => 1 - Math.pow(1 - t, 4),
   });
   const landed = frame > settle;
   const glow = landed ? interpolate(frame - settle, [0, 10], [0, 1], {extrapolateRight: 'clamp'}) : 0;
+  // After it lands the stack keeps breathing — a slow pulse on the buried
+  // sheet, so the held frame is never completely dead.
+  const pulse = landed ? 0.82 + 0.18 * Math.cos(((frame - settle) / 26) * Math.PI * 2) : 1;
 
   const first = Math.max(1, Math.floor(pos) - 6);
   const rows = Array.from({length: 16}, (_, i) => first + i);
@@ -104,7 +122,9 @@ export const Rank = ({to = 340, total = 400, caption = 'applicants'}) => {
                 borderRadius: 10,
                 background: isTarget ? C.orange : C.paper,
                 opacity: isTarget ? 1 : dim,
-                boxShadow: isTarget ? `0 0 ${60 * glow}px ${24 * glow}px rgba(255,77,46,0.55)` : 'none',
+                boxShadow: isTarget
+                  ? `0 0 ${60 * glow * pulse}px ${24 * glow * pulse}px rgba(255,77,46,0.55)`
+                  : 'none',
               }}
             />
           );
@@ -124,9 +144,20 @@ export const Rank = ({to = 340, total = 400, caption = 'applicants'}) => {
 // ---------------------------------------------------------------- stat
 export const Stat = ({value, suffix = '%', label, source}) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-  const s = ease(frame, fps, 0, 26);
-  const shown = Math.round(value * s);
+  const {fps, durationInFrames} = useVideoConfig();
+  // The count used to finish in under half a second and then sit there for
+  // seven. Spread it across the first 45% of the scene, reveal the label at
+  // 40% and the source chip at 60%, so something is always arriving.
+  const countTo = Math.max(14, durationInFrames * 0.45);
+  const t = interpolate(frame, [0, countTo], [0, 1], {
+    extrapolateRight: 'clamp',
+    easing: (x) => 1 - Math.pow(1 - x, 3),
+  });
+  const shown = Math.round(value * t);
+  const labelAt = Math.round(durationInFrames * 0.4);
+  const sourceAt = Math.round(durationInFrames * 0.6);
+  // a long, slow push on the number so a held frame still has life in it
+  const push = interpolate(frame, [0, durationInFrames], [1, 1.05]);
 
   return (
     <div style={{...center, padding: '0 100px'}}>
@@ -136,7 +167,7 @@ export const Stat = ({value, suffix = '%', label, source}) => {
           fontWeight: 800,
           color: C.paper,
           lineHeight: 0.9,
-          transform: `scale(${interpolate(s, [0, 1], [0.86, 1])})`,
+          transform: `scale(${interpolate(t, [0, 1], [0.86, 1]) * push})`,
         }}
       >
         {shown}
@@ -150,12 +181,15 @@ export const Stat = ({value, suffix = '%', label, source}) => {
           color: C.paper,
           textAlign: 'center',
           lineHeight: 1.22,
-          opacity: interpolate(frame, [10, 24], [0, 1], {extrapolateRight: 'clamp'}),
+          opacity: interpolate(frame, [labelAt, labelAt + 14], [0, 1], {
+            extrapolateLeft: 'clamp',
+            extrapolateRight: 'clamp',
+          }),
         }}
       >
         {label}
       </div>
-      <Source source={source} frame={frame} style={{marginTop: 54}} />
+      <Source source={source} frame={frame - sourceAt} at={0} style={{marginTop: 54}} />
     </div>
   );
 };

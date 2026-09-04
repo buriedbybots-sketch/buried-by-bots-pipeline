@@ -26,6 +26,7 @@ const fail = (msg) => {
 const HOOK_MAX_MS = 2500;
 const HOOK_HARD_MS = 3200; // 3s plus room for TTS jitter — an approved hook measures 2997ms
 const TAIL_S = 0.5; // the loop-back tail, see src/theme.js
+const TARGET_S = 45; // soft ceiling: past this a cold viewer stops finishing it
 const BED = 'pulse.wav';
 
 const content = JSON.parse(readFileSync(`content/${id}.json`, 'utf8'));
@@ -69,16 +70,41 @@ if (hookMs > HOOK_HARD_MS) {
 
 // Shorts eligibility is 60s. Fail here rather than after a 3-minute render and
 // a silently-ineligible upload.
+//
+// But 58s is the platform's limit, not ours. A cold-audience Short is watched
+// to the end at 30-40s and abandoned well before 55, so the guard that
+// matters is the soft one: past TARGET_S the video is too long to hold a
+// stranger, whatever YouTube will accept.
 const seconds = audio.scenes.reduce((a, s) => a + s.durationMs, 0) / 1000 + TAIL_S;
 if (seconds > 58) fail(`${seconds.toFixed(1)}s — too long for Shorts. Cut a scene or shorten a vo line.`);
+if (seconds > TARGET_S) {
+  console.warn(
+    `\n  ⚠ ${seconds.toFixed(1)}s — over the ${TARGET_S}s target. It will upload, but a stranger will not` +
+      ` finish it. Cut the weakest scene, or trim the two longest vo lines.`
+  );
+}
 
 console.log(`\nrendering ${id}  (${seconds.toFixed(1)}s, hook ${(hookMs / 1000).toFixed(1)}s)`);
 run('npx', ['remotion', 'render', 'src/index.jsx', 'Short', `out/${id}.mp4`, `--props=out/${id}.props.json`]);
 
-// Instagram picks an arbitrary frame as the Reel cover otherwise, usually
-// mid-transition. Frame 40 is the hook with every word landed (SETTLED in
-// src/Short.jsx — same frame the loop tail freezes on).
-run('npx', ['remotion', 'still', 'src/index.jsx', 'Short', `out/${id}.cover.jpg`, '--frame=40', `--props=out/${id}.props.json`]);
+// The Reel cover. Instagram picks a mid-transition frame otherwise, and the
+// cover is the one-frame test: a stranger sees it with no audio and has to
+// know this is about US tech hiring.
+//
+// Frame 40 — scene 1, settled — was hard-coded, and scene 1 is a bare hook
+// card. Prefer the first scene that says who this is for on screen: an
+// artifact scene (a Greenhouse req, a rejection mail, a comp table) or any
+// scene carrying a `head` kicker. Fall back to scene 1 when a row has
+// neither.
+const ARTIFACT = new Set(['posting', 'rejection', 'comp', 'market']);
+const coverIdx = content.scenes.findIndex((s) => ARTIFACT.has(s.type) || s.head);
+const lens = audio.scenes.map((s) => Math.max(1, Math.ceil((s.durationMs / 1000) * 30)) + 8);
+const coverFrame =
+  coverIdx === -1
+    ? 40
+    : lens.slice(0, coverIdx).reduce((a, b) => a + b, 0) + Math.min(45, lens[coverIdx] - 1);
+console.log(`cover: frame ${coverFrame} (scene ${coverIdx === -1 ? 1 : coverIdx + 1})`);
+run('npx', ['remotion', 'still', 'src/index.jsx', 'Short', `out/${id}.cover.jpg`, `--frame=${coverFrame}`, `--props=out/${id}.props.json`]);
 
 // --- the copy. Composed once, here, and read by upload.mjs and deliver.mjs.
 // They used to each build their own strings, which is how videos went live
