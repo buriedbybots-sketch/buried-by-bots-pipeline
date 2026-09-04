@@ -23,6 +23,9 @@ export const DENY = [
   'joining date', 'date of joining', 'service-based', 'product-based', 'service based', 'product based',
   'bond period', 'salary package', 'package of', 'revert back', 'do the needful', 'kindly', 'prepone',
   'mass recruiter', 'referral drive',
+  // Indian cities: a US viewer hears where the speaker is
+  'Bangalore', 'Bengaluru', 'Hyderabad', 'Pune', 'Chennai', 'Gurgaon', 'Gurugram', 'Noida', 'Mumbai', 'Delhi',
+  'Kolkata', 'Ahmedabad', 'Kochi', 'Coimbatore',
   // job boards and employers that only signal India
   'Naukri', 'Internshala', 'AmbitionBox', 'TCS', 'Infosys', 'Wipro', 'Cognizant', 'HCL', 'Tech Mahindra',
   'Capgemini', 'Zoho',
@@ -49,7 +52,20 @@ export const IDENTITY = [
   /\b(?:after|with) (?:\w+ |\d+ )?years? (?:in|of|as a) (?:tech )?(?:recruit|hiring|sourcing)/i,
   /\b(?:we|our team|my team) (?:hire|hired|reject|rejected|screen|screened|interview|interviewed) /i,
   /\bhere in the (?:us|states|bay area|valley|city)\b/i,
+  /\bi(?:'m| am) an? (?:\w+ )?(?:engineer|manager|recruiter|director|founder|lead) at\b/i,
+  /\b(?:they|we|google|meta|amazon|a (?:faang|startup|company)) hired me\b/i,
+  /\bi (?:run|ran|lead|led|own|manage|managed) (?:the )?(?:hiring|recruiting|a team|the team|engineering)\b/i,
+  /\b(?:sat|been|sit) on the other side of the (?:hiring |interview )?table\b/i,
+  /\b(?:at|in) my (?:company|team|org|startup)\b/i,
 ];
+
+// Enumerating verbs is an arms race. Any first-person sentence that asserts
+// authority — I know, I have seen, I have done this for years, in my
+// experience — gets a loud warning so a human reads it before it ships. The
+// operator's position is "the person who tested the tools", and that is the
+// only "I" a script should need.
+const AUTHORITY =
+  /\bi (?:know|have seen|'ve seen|have done|'ve done|have spent|'ve spent|have worked|'ve worked|have been|'ve been|can tell you|promise|guarantee)\b|\bin my (?:experience|years|time|career)\b|\btrust me\b|\btake it from me\b/i;
 
 // --- what "US tech job seeker" sounds like. Two tiers. STRONG tokens are
 // geography: a US product, board, city, level, comp term or a $ figure —
@@ -132,7 +148,15 @@ const screenText = (scene) =>
     .filter(Boolean)
     .join('\n');
 
-export const lint = (content, {protectedHashes, ci = false} = {}) => {
+const linksKeyword = () => {
+  try {
+    return JSON.parse(readFileSync('content/links.json', 'utf8')).keyword || null;
+  } catch {
+    return null;
+  }
+};
+
+export const lint = (content, {protectedHashes, ci = false, keyword = linksKeyword()} = {}) => {
   const errors = [];
   const warnings = [];
   const scenes = content.scenes || [];
@@ -183,6 +207,8 @@ export const lint = (content, {protectedHashes, ci = false} = {}) => {
     const hit = everything.match(re);
     if (hit) errors.push(`identity claim "${hit[0].trim()}" — the operator is the person who tested the tools, not a recruiter, an insider or a hire`);
   }
+  const auth = spoken.match(AUTHORITY);
+  if (auth) warnings.push(`first-person authority "${auth[0]}" — read this line as a stranger would. The only "I" this channel has is "I tested it."`);
 
   const strong = US_STRONG.filter((t) => wordRe(t).test(spoken));
   if (/\$\s?\d[\d,]*k?\b/i.test(spoken) || /\b\d{2,3}k\b/i.test(spoken)) strong.push('$ figure');
@@ -223,6 +249,9 @@ export const lint = (content, {protectedHashes, ci = false} = {}) => {
   const cta = scenes.find((s) => s.type === 'cta');
   if (!cta) errors.push('no cta scene — every video ends on the keyword CTA, or the view is wasted');
   else if (!cta.keyword) errors.push('the cta scene has no keyword — "link in bio" is four taps, a comment is one');
+  else if (keyword && cta.keyword.toUpperCase() !== keyword.toUpperCase()) {
+    errors.push(`the cta says COMMENT "${cta.keyword}" but links.json listens for "${keyword}" — the DM automation would never fire`);
+  }
   if (!/\[LEAD MAGNET LINK\]|https?:\/\//.test(content.pinned || '')) {
     errors.push('the pinned comment has no link — put [LEAD MAGNET LINK] in the pinned cell; that comment is where the click happens');
   }

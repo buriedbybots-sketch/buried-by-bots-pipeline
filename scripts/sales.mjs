@@ -3,23 +3,23 @@
 //   node scripts/sales.mjs          # last 7 days
 //   node scripts/sales.mjs 28
 //
-// Reads Gumroad sales for the $19 product and the free pack, groups the paid
-// ones by the per-video offer code that build.mjs put in every pinned
-// comment and description, and prints one line per code. Sends the same to
-// Telegram when the bot is configured. Runs every Monday with geo.mjs, so
-// the weekly message reads "US 62% · YT0828 → 3 sales" in one screen.
+// Per-video attribution comes from the usage count on each video's Gumroad
+// code (build.mjs mints YT0828 etc. and puts it in the product URL). That
+// count is cumulative, so the report shows lifetime uses per code plus the
+// window's sale total; sales are grouped by code as well when the API
+// happens to say which code a sale used. Sends the same to Telegram when the
+// bot is configured. Runs every Monday with geo.mjs.
 //
-// Needs GUMROAD_TOKEN. Sales with no code came from the bio link, the free
-// pack's emails, or a typed URL — real, just unattributed.
+// Needs GUMROAD_TOKEN; without it the report is skipped, not failed.
 import {readFileSync} from 'node:fs';
-import {productId, sales} from './lib/gumroad.mjs';
+import {codes, productId, sales} from './lib/gumroad.mjs';
 import {telegram} from './lib/telegram.mjs';
 
 const days = Number(process.argv[2] || 7);
 const links = JSON.parse(readFileSync('content/links.json', 'utf8'));
 if (!process.env.GUMROAD_TOKEN) {
-  console.error('GUMROAD_TOKEN is not set — see DEPLOY.md');
-  process.exit(1);
+  console.log('GUMROAD_TOKEN not set — skipping the sales report (see DEPLOY.md).');
+  process.exit(0);
 }
 const after = new Date(Date.now() - days * 86400e3).toISOString().slice(0, 10);
 
@@ -28,20 +28,32 @@ const say = (s) => {
   out.push(s);
   console.log(s);
 };
+const usd = (cents) => `$${(Number(cents || 0) / 100).toFixed(2)}`;
 
 const paidId = await productId(links.product);
 const paid = await sales(paidId, after);
-const byCode = {};
-for (const s of paid) {
-  const code = (s.offer_code || '—').toUpperCase();
-  byCode[code] = byCode[code] || {n: 0, usd: 0};
-  byCode[code].n++;
-  byCode[code].usd += Number(s.price || 0) / 100;
-}
 say(`SALES — last ${days} days (since ${after})`);
-say(`Hired by AI: ${paid.length} sale(s), $${paid.reduce((a, s) => a + Number(s.price || 0) / 100, 0).toFixed(2)}`);
-for (const [code, v] of Object.entries(byCode).sort((a, b) => b[1].n - a[1].n)) {
-  say(`  ${code.padEnd(8)} ${String(v.n).padStart(3)} sale(s)  $${v.usd.toFixed(2)}${code === '—' ? '   (no code: bio, email or typed)' : ''}`);
+say(`Hired by AI: ${paid.length} sale(s), ${usd(paid.reduce((a, s) => a + Number(s.price || 0), 0))}`);
+
+// Per-video codes, lifetime uses. The number that says which video sold.
+const perVideo = (await codes(paidId)).filter((c) => /^YT\d{4}$/.test(c.name) || c.name.startsWith('YT'));
+if (perVideo.length) {
+  say('By video code (lifetime uses):');
+  for (const c of perVideo.sort((a, b) => (b.used ?? 0) - (a.used ?? 0))) {
+    say(`  ${c.name.padEnd(8)} ${c.used == null ? '(no usage count from the API)' : `${String(c.used).padStart(3)} use(s)`}`);
+  }
+} else {
+  say('No per-video codes on the product yet — build.mjs creates them once GUMROAD_TOKEN is set.');
+}
+
+// Grouped by code from the sales themselves, only if the API reported one.
+const attributed = paid.filter((s) => s.code);
+if (attributed.length) {
+  const byCode = {};
+  for (const s of attributed) byCode[s.code] = (byCode[s.code] || 0) + 1;
+  say(`This window, by code: ${Object.entries(byCode).map(([k, v]) => `${k} ${v}`).join(' · ')}`);
+} else if (paid.length) {
+  say('(sales in this window carry no code field — attribution is from the usage counts above)');
 }
 
 if (links.leadMagnet) {

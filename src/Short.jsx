@@ -296,7 +296,8 @@ export const Short = ({content, audio}) => {
         const spoken = (scene.vo || '').split(/\s+/).filter(Boolean).length;
         const shownWords = (scene.text || '').split(/\s+/).filter(Boolean).length;
         const covered = SELF_CAPTIONED.has(scene.type) && spoken <= shownWords + 4;
-        const silent = scene.captions === false || (scene.captions !== true && covered);
+        // content.cover: build.mjs rendering the Reel cover — no caption fragment
+        const silent = content.cover || scene.captions === false || (scene.captions !== true && covered);
         if (silent) return null;
         return (
           <Sequence key={`c${i}`} from={starts[i]} durationInFrames={lens[i]}>

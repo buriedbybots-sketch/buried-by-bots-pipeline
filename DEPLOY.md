@@ -136,8 +136,8 @@ GitHub delays scheduled runs under load, so treat 13:00 UTC as "sometime in the 
 
 ## Two things to do once, before the first upload
 
-1. **Fingerprint the protected prompts.** Put the text of Vault Prompts 1, 2, 3 and 26 in a file outside the repo and run `node scripts/protect.mjs <that file>`. It writes `content/protected.json` — one-way hashes, no text — and you commit that. The linter then refuses any 8-word run of those prompts in any scene, spoken or on screen. **In CI the build fails until this file exists**, because it is the one content rule that cannot be enforced by reading the sheet.
-2. **Create the `GUMROAD_TOKEN` secret** so every video gets its own discount code. This is the only way the pipeline can ever tell you which video sold.
+1. ~~Fingerprint the protected prompts.~~ **Done 2026-09-04** — `content/protected.json` is committed (729 one-way hashes of Vault 1, 2, 3 and 26; no text). Re-run `node scripts/protect.mjs <file with only those four prompts>` if the prompts ever change. The linter refuses any 8-word run of them in any scene, spoken or on screen, and CI fails if the file goes missing.
+2. **Create the `GUMROAD_TOKEN` secret** so every video gets its own discount code. This is the only way the pipeline can ever tell you which video sold. Then run `node scripts/sales.mjs` once locally with the token and read the raw output: the API is not documented to say which code a sale used, so attribution rests on each code's usage count. If that count is missing too, say so in the campaign log and fall back to Gumroad's own dashboard per code.
 
 ## The number that decides whether any of this is working
 

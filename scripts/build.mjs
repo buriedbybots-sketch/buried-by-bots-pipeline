@@ -104,7 +104,10 @@ const coverFrame =
     ? 40
     : lens.slice(0, coverIdx).reduce((a, b) => a + b, 0) + Math.min(45, lens[coverIdx] - 1);
 console.log(`cover: frame ${coverFrame} (scene ${coverIdx === -1 ? 1 : coverIdx + 1})`);
-run('npx', ['remotion', 'still', 'src/index.jsx', 'Short', `out/${id}.cover.jpg`, `--frame=${coverFrame}`, `--props=out/${id}.props.json`]);
+// Captions off for the still: a caption fragment burned into a cover reads
+// as a mistake.
+writeFileSync(`out/${id}.cover.props.json`, JSON.stringify({content: {...content, cover: true}, audio}));
+run('npx', ['remotion', 'still', 'src/index.jsx', 'Short', `out/${id}.cover.jpg`, `--frame=${coverFrame}`, `--props=out/${id}.cover.props.json`]);
 
 // --- the copy. Composed once, here, and read by upload.mjs and deliver.mjs.
 // They used to each build their own strings, which is how videos went live
