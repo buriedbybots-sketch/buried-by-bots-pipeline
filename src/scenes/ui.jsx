@@ -1,6 +1,6 @@
 // Shared layout primitives for every scene. Nothing here knows about content.
 import React from 'react';
-import {spring} from 'remotion';
+import {spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import {C} from '../theme.js';
 
 export const ease = (frame, fps, delay = 0, damping = 200) =>
@@ -38,23 +38,32 @@ export const mono = {fontFamily: 'var(--mono)', fontWeight: 400};
 
 // The "someone else's software" frame: a job req, a mail client, a comp table.
 // One card for all of them so the set reads as one channel, not four.
-export const Card = ({children, style, s = 1}) => (
-  <div
-    style={{
-      width: '100%',
-      background: C.panel,
-      border: `2px solid ${C.line}`,
-      borderRadius: 22,
-      overflow: 'hidden',
-      textAlign: 'left',
-      opacity: s,
-      transform: `translateY(${(1 - s) * 40}px)`,
-      ...style,
-    }}
-  >
-    {children}
-  </div>
-);
+//
+// After it lands, the card keeps drifting very slowly toward the viewer. A
+// card that holds for eight seconds with nothing moving reads as a frozen
+// video, and a frozen video gets swiped.
+export const Card = ({children, style, s = 1}) => {
+  const frame = useCurrentFrame();
+  const {durationInFrames} = useVideoConfig();
+  const drift = 1 + (0.035 * Math.min(frame, durationInFrames)) / Math.max(1, durationInFrames);
+  return (
+    <div
+      style={{
+        width: '100%',
+        background: C.panel,
+        border: `2px solid ${C.line}`,
+        borderRadius: 22,
+        overflow: 'hidden',
+        textAlign: 'left',
+        opacity: s,
+        transform: `translateY(${(1 - s) * 40}px) scale(${drift})`,
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
 
 // Mac-style title bar. Three dots and a mono label is all the eye needs to
 // read "this is a screenshot of a real app".

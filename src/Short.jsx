@@ -105,6 +105,28 @@ const Backdrop = ({file}) => {
   );
 };
 
+// --- the channel handle, always on. Every screen-record and repost of a
+// faceless channel is an orphan without it. Sits below YouTube's top chrome.
+const Handle = () => (
+  <div
+    style={{
+      position: 'absolute',
+      top: 72, // clear of the rank counter at 150 and under the platform's top chrome
+      left: 0,
+      right: 0,
+      textAlign: 'center',
+      fontFamily: 'var(--mono)',
+      fontSize: 26,
+      letterSpacing: '3px',
+      color: C.steel,
+      opacity: 0.85,
+      textShadow: '0 2px 12px rgba(0,0,0,0.8)',
+    }}
+  >
+    @buriedbybots
+  </div>
+);
+
 // --- a 6-frame orange scan wipe on every cut.
 const Scan = () => {
   const frame = useCurrentFrame();
@@ -254,8 +276,17 @@ export const Short = ({content, audio}) => {
         <Scan />
       </Sequence>
 
+      <Handle />
+
       {content.scenes.map((scene, i) => {
-        const silent = scene.captions === false || (scene.captions !== true && SELF_CAPTIONED.has(scene.type));
+        // A hook or cta already shows its line in display type — unless the
+        // voice says a lot more than the card does, in which case a muted
+        // viewer would sit on a static card for ten seconds. Word counts,
+        // not scene types, decide.
+        const spoken = (scene.vo || '').split(/\s+/).filter(Boolean).length;
+        const shownWords = (scene.text || '').split(/\s+/).filter(Boolean).length;
+        const covered = SELF_CAPTIONED.has(scene.type) && spoken <= shownWords + 4;
+        const silent = scene.captions === false || (scene.captions !== true && covered);
         if (silent) return null;
         return (
           <Sequence key={`c${i}`} from={starts[i]} durationInFrames={lens[i]}>

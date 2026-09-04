@@ -9,7 +9,7 @@
   ],
   "music": "pulse.wav",
   "caption": "Nobody rejected you. You were ranked #340 of 400 and a human only ever looks at page one.\n\n43% of parsing failures are formatting, not content (ResumeAdapter, 10k scans, Q1 2026).\n\nPrompt 5 of 25. Comment PACK and I will send you the free five.",
-  "pinned": "Free 5-prompt pack (no upsell in it): [LEAD MAGNET LINK]",
+  "pinned": "Free 5-prompt pack, no upsell in it: [LEAD MAGNET LINK]\nAll 25 (Hired by AI, $19): [PRODUCT LINK]",
   "seed": "Nobody rejected you. You were ranked #340 of 400, and a human only ever looks at page one.",
   "communities": [
     "r/resumes",
@@ -72,7 +72,8 @@
       "type": "cta",
       "vo": "Four more like it in the free pack. Comment the word pack and I'll send it.",
       "text": "FREE PROMPT PACK",
-      "keyword": "PACK"
+      "keyword": "PACK",
+      "sub": "PROMPT 5 OF 25 · HIRED BY AI"
     }
   ]
 }
