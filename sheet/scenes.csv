@@ -1,12 +1,12 @@
 date,order,type,vo,text,accent,head,to,total,caption,value,suffix,label,source,title,lines,sub,keyword,company,location,pay,time,photo,captions
-2026-08-28,1,hook,You didn't get rejected. You got ranked.,YOU DIDN'T GET REJECTED. YOU GOT RANKED.,RANKED,,,,,,,,,,,,,,,,,,
-2026-08-28,2,hook,Applying to software jobs in the US and hearing nothing back? Here's what actually happens.,WHY YOUR RESUME NEVER GOT READ.,READ,FOR US TECH JOB SEEKERS,,,,,,,,,,,,,,,,,
-2026-08-28,3,rank,"A recruiter with four hundred applicants doesn't read four hundred resumes. They search three keywords, get a ranked list, and work down from the top. You came back at three forty.",,,,340,400,applicants,,,,,,,,,,,,,,
-2026-08-28,4,rejection,"This is the email you got back. Automated, four twelve in the morning, sent to everyone below the fold.",,,,,,,,,,,,,,,Northwind,,,Mon 4:12 AM,,
-2026-08-28,5,hook,Nobody rejected you. Nobody ever opened it.,NOBODY REJECTED YOU. NOBODY EVER OPENED IT.,OPENED,,,,,,,,,,,,,,,,,,
-2026-08-28,6,stat,And here's the part that should annoy you. Forty three percent of the resumes that fail never failed on content. They failed on formatting.,,,,,,,43,%,"of parsing failures are caused by formatting, not content","ResumeAdapter, 10,000 scans, Q1 2026",,,,,,,,,,
-2026-08-28,7,test,"Before you apply again, do this. Copy your resume. Paste it into a blank notepad file.",PASTE YOUR RESUME INTO A BLANK NOTEPAD FILE,,60-SECOND TEST,,,,,,"IF IT SCRAMBLES, THAT'S WHAT THE MACHINE SEES",,,,,,,,,,,
-2026-08-28,8,prompt,"So run this before you apply again. Paste your resume in, and it flags every thing that breaks the parser.",,,,,,,,,,,PROMPT 5 — THE FORMAT CLEANER,"Act as an ATS parser. Review my resume
+2026-09-05,1,hook,You didn't get rejected. You got ranked.,YOU DIDN'T GET REJECTED. YOU GOT RANKED.,RANKED,,,,,,,,,,,,,,,,,,
+2026-09-05,2,hook,Applying to software jobs in the US and hearing nothing back? Here's what actually happens.,WHY YOUR RESUME NEVER GOT READ.,READ,FOR US TECH JOB SEEKERS,,,,,,,,,,,,,,,,,
+2026-09-05,3,rank,"A recruiter with four hundred applicants doesn't read four hundred resumes. They search three keywords, get a ranked list, and work down from the top. You came back at three forty.",,,,340,400,applicants,,,,,,,,,,,,,,
+2026-09-05,4,rejection,"This is the email you got back. Automated, four twelve in the morning, sent to everyone below the fold.",,,,,,,,,,,,,,,Northwind,,,Mon 4:12 AM,,
+2026-09-05,5,hook,Nobody rejected you. Nobody ever opened it.,NOBODY REJECTED YOU. NOBODY EVER OPENED IT.,OPENED,,,,,,,,,,,,,,,,,,
+2026-09-05,6,stat,And here's the part that should annoy you. Forty three percent of the resumes that fail never failed on content. They failed on formatting.,,,,,,,43,%,"of parsing failures are caused by formatting, not content","ResumeAdapter, 10,000 scans, Q1 2026",,,,,,,,,,
+2026-09-05,7,test,"Before you apply again, do this. Copy your resume. Paste it into a blank notepad file.",PASTE YOUR RESUME INTO A BLANK NOTEPAD FILE,,60-SECOND TEST,,,,,,"IF IT SCRAMBLES, THAT'S WHAT THE MACHINE SEES",,,,,,,,,,,
+2026-09-05,8,prompt,"So run this before you apply again. Paste your resume in, and it flags every thing that breaks the parser.",,,,,,,,,,,PROMPT 5 — THE FORMAT CLEANER,"Act as an ATS parser. Review my resume
 formatting below and flag anything that
 could cause a parsing error or rank me
 lower: multi-column layouts, tables, text
@@ -16,13 +16,13 @@ single-column structure that parses
 reliably.
 
 MY RESUME: [PASTE]",,,,,,,,
-2026-08-28,9,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,PROMPT 5 OF 25 · HIRED BY AI,PACK,,,,,,
-2026-08-29,1,hook,Recruiters don't browse LinkedIn. They search it.,RECRUITERS DON'T BROWSE LINKEDIN. THEY SEARCH IT.,SEARCH,,,,,,,,,,,,,,,,,,
-2026-08-29,2,hook,Applying to US tech jobs and recruiters never message you? Here's why.,WHY RECRUITERS NEVER FIND YOU.,FIND,FOR US TECH JOB SEEKERS,,,,,,,,,,,,,,,,,
-2026-08-29,3,rejection,Meanwhile the inbox looks like this. Not because you're bad. Because search never surfaced you.,,,,,,,,,,,,,,,Northwind,,,Thu 4:12 AM,,
-2026-08-29,4,test,"Do this now. Open LinkedIn, search the exact job title you want, and set the filter to people. Then find yourself.",SEARCH THE JOB TITLE YOU WANT. NOW FIND YOURSELF.,,30-SECOND TEST,,,,,,"NOT ON PAGE ONE? NEITHER ARE YOU, TO THEM",,,,,,,,,,,
-2026-08-29,5,hook,Your headline is the field that search weighs most. Most people spend it on the two words already printed under their name.,YOUR HEADLINE IS THE FIELD SEARCH WEIGHS MOST.,HEADLINE,,,,,,,,,,,,,,,,,,
-2026-08-29,6,prompt,"So make it work. This gives you five options, keyword-rich, without the buzzword soup.",,,,,,,,,,,PROMPT 12 — THE HEADLINE OPTIMIZER,"Write 5 LinkedIn headline options for a
+2026-09-05,9,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,PROMPT 5 OF 25 · HIRED BY AI,PACK,,,,,,
+2026-09-06,1,hook,Recruiters don't browse LinkedIn. They search it.,RECRUITERS DON'T BROWSE LINKEDIN. THEY SEARCH IT.,SEARCH,,,,,,,,,,,,,,,,,,
+2026-09-06,2,hook,Applying to US tech jobs and recruiters never message you? Here's why.,WHY RECRUITERS NEVER FIND YOU.,FIND,FOR US TECH JOB SEEKERS,,,,,,,,,,,,,,,,,
+2026-09-06,3,rejection,Meanwhile the inbox looks like this. Not because you're bad. Because search never surfaced you.,,,,,,,,,,,,,,,Northwind,,,Thu 4:12 AM,,
+2026-09-06,4,test,"Do this now. Open LinkedIn, search the exact job title you want, and set the filter to people. Then find yourself.",SEARCH THE JOB TITLE YOU WANT. NOW FIND YOURSELF.,,30-SECOND TEST,,,,,,"NOT ON PAGE ONE? NEITHER ARE YOU, TO THEM",,,,,,,,,,,
+2026-09-06,5,hook,Your headline is the field that search weighs most. Most people spend it on the two words already printed under their name.,YOUR HEADLINE IS THE FIELD SEARCH WEIGHS MOST.,HEADLINE,,,,,,,,,,,,,,,,,,
+2026-09-06,6,prompt,"So make it work. This gives you five options, keyword-rich, without the buzzword soup.",,,,,,,,,,,PROMPT 12 — THE HEADLINE OPTIMIZER,"Write 5 LinkedIn headline options for a
 [ROLE] with [X] years of experience in
 [MAIN SKILLS]. They should be keyword-rich
 for recruiter search, under 220 characters,
@@ -30,13 +30,13 @@ and not sound like desperate buzzword soup.
 Mix a few styles: straightforward,
 value-focused, and one with a bit of
 personality.",,,,,,,,
-2026-08-29,7,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,PROMPT 12 OF 25 · HIRED BY AI,PACK,,,,,,
-2026-08-30,1,hook,They already told you the interview questions.,THEY ALREADY TOLD YOU THE INTERVIEW QUESTIONS.,ALREADY,,,,,,,,,,,,,,,,,,
-2026-08-30,2,hook,Interviewing for a US tech job? The question list is already written down.,"THE QUESTIONS, BEFORE THE INTERVIEW.",BEFORE,FOR US TECH JOB SEEKERS,,,,,,,,,,,,,,,,,
-2026-08-30,3,hook,It's called the job description.,IT'S CALLED THE JOB DESCRIPTION.,DESCRIPTION,,,,,,,,,,,,,,,,,,
-2026-08-30,4,rejection,"Skip that list, and this is the email that comes back. Four twelve in the morning. Nobody was awake when it sent.",,,,,,,,,,,,,,,Northwind,,,Tue 4:12 AM,,
-2026-08-30,5,test,Go back to the posting and read the requirements section again. Every single line in there is something a human has to check in the room.,READ THE REQUIREMENTS SECTION AGAIN,,30-SECOND TEST,,,,,,EVERY BULLET IS A QUESTION THEY HAVE TO ASK,,,,,,,,,,,
-2026-08-30,6,prompt,"This turns the posting into the actual question list, and tells you what each one is really testing.",,,,,,,,,,,PROMPT 16 — THE LIKELY-QUESTIONS GENERATOR,"You are the hiring manager for this role.
+2026-09-06,7,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,PROMPT 12 OF 25 · HIRED BY AI,PACK,,,,,,
+2026-09-07,1,hook,They already told you the interview questions.,THEY ALREADY TOLD YOU THE INTERVIEW QUESTIONS.,ALREADY,,,,,,,,,,,,,,,,,,
+2026-09-07,2,hook,Interviewing for a US tech job? The question list is already written down.,"THE QUESTIONS, BEFORE THE INTERVIEW.",BEFORE,FOR US TECH JOB SEEKERS,,,,,,,,,,,,,,,,,
+2026-09-07,3,hook,It's called the job description.,IT'S CALLED THE JOB DESCRIPTION.,DESCRIPTION,,,,,,,,,,,,,,,,,,
+2026-09-07,4,rejection,"Skip that list, and this is the email that comes back. Four twelve in the morning. Nobody was awake when it sent.",,,,,,,,,,,,,,,Northwind,,,Tue 4:12 AM,,
+2026-09-07,5,test,Go back to the posting and read the requirements section again. Every single line in there is something a human has to check in the room.,READ THE REQUIREMENTS SECTION AGAIN,,30-SECOND TEST,,,,,,EVERY BULLET IS A QUESTION THEY HAVE TO ASK,,,,,,,,,,,
+2026-09-07,6,prompt,"This turns the posting into the actual question list, and tells you what each one is really testing.",,,,,,,,,,,PROMPT 16 — THE LIKELY-QUESTIONS GENERATOR,"You are the hiring manager for this role.
 Based on the job description below, generate
 the 12 most likely interview questions,
 grouped into: behavioral, technical/role-
@@ -45,13 +45,13 @@ For each, add one line on what the
 interviewer is really trying to learn.
 
 JOB DESCRIPTION: [PASTE]",,,,,,,,
-2026-08-30,7,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,PROMPT 16 OF 25 · HIRED BY AI,PACK,,,,,,
-2026-08-31,1,hook,One referral skips the whole pile.,ONE REFERRAL SKIPS THE WHOLE PILE.,SKIPS,,,,,,,,,,,,,,,,,,
-2026-08-31,2,hook,Sending hundreds of applications to US tech companies? One move goes around the pile.,THE ONE MOVE THAT SKIPS THE PILE.,SKIPS,FOR US TECH JOB SEEKERS,,,,,,,,,,,,,,,,,
-2026-08-31,3,rejection,"Every one of those applications gets this back. Same template, same hour, same nobody.",,,,,,,,,,,,,,,Northwind,,,Fri 4:12 AM,,
-2026-08-31,4,stat,The average opening takes more than three hundred applications to fill one seat. You are not competing for attention. You are queuing for it.,,,,,,,300,+,applications per hire at the average company,"Jobscan, via ApplyMate",,,,,,,,,,
-2026-08-31,5,rank,"A referral doesn't rank higher in that queue. It goes around it. Someone inside the company hands your name to the recruiter, and you skip the sort entirely.",,,,340,400,applicants,,,,,,,,,,,,,,
-2026-08-31,6,prompt,"The hard part isn't knowing that. It's asking without it being weird. This makes it easy for them to say no, which is exactly why they say yes.",,,,,,,,,,,PROMPT 9 — THE REFERRAL ASK,"Help me write a short, no-pressure message
+2026-09-07,7,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,PROMPT 16 OF 25 · HIRED BY AI,PACK,,,,,,
+2026-09-08,1,hook,One referral skips the whole pile.,ONE REFERRAL SKIPS THE WHOLE PILE.,SKIPS,,,,,,,,,,,,,,,,,,
+2026-09-08,2,hook,Sending hundreds of applications to US tech companies? One move goes around the pile.,THE ONE MOVE THAT SKIPS THE PILE.,SKIPS,FOR US TECH JOB SEEKERS,,,,,,,,,,,,,,,,,
+2026-09-08,3,rejection,"Every one of those applications gets this back. Same template, same hour, same nobody.",,,,,,,,,,,,,,,Northwind,,,Fri 4:12 AM,,
+2026-09-08,4,stat,The average opening takes more than three hundred applications to fill one seat. You are not competing for attention. You are queuing for it.,,,,,,,300,+,applications per hire at the average company,"Jobscan, via ApplyMate",,,,,,,,,,
+2026-09-08,5,rank,"A referral doesn't rank higher in that queue. It goes around it. Someone inside the company hands your name to the recruiter, and you skip the sort entirely.",,,,340,400,applicants,,,,,,,,,,,,,,
+2026-09-08,6,prompt,"The hard part isn't knowing that. It's asking without it being weird. This makes it easy for them to say no, which is exactly why they say yes.",,,,,,,,,,,PROMPT 9 — THE REFERRAL ASK,"Help me write a short, no-pressure message
 asking [NAME], who works at [COMPANY], for a
 referral to their [ROLE] opening. We [HOW WE
 KNOW EACH OTHER]. Make it easy for them to
@@ -59,13 +59,13 @@ say no, attach value (offer to send my resume
 so it's zero effort for them), and keep it
 under 5 sentences. Friendly, not
 transactional.",,,,,,,,
-2026-08-31,7,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,PROMPT 9 OF 25 · HIRED BY AI,PACK,,,,,,
-2026-09-01,1,hook,You have the story. You just don't have it in the shape they score.,YOU HAVE THE STORY. NOT IN THE SHAPE THEY SCORE.,SHAPE,,,,,,,,,,,,,,,,,,
-2026-09-01,2,hook,Behavioral interview at a US tech company coming up? Here's the rubric they score against.,THE SHAPE INTERVIEWERS ACTUALLY SCORE.,SCORE,FOR US TECH JOB SEEKERS,,,,,,,,,,,,,,,,,
-2026-09-01,3,rejection,"Miss the shape, and this is what lands the next morning. Same wording every company uses.",,,,,,,,,,,,,,,Northwind,,,Wed 4:12 AM,,
-2026-09-01,4,test,"Try it right now. Say your best work story out loud and time it. If you went past ninety seconds, they stopped listening somewhere in the middle.",SAY YOUR BEST WORK STORY OUT LOUD. TIME IT.,,90-SECOND TEST,,,,,,PAST 90 SECONDS? THEY STOPPED LISTENING,,,,,,,,,,,
-2026-09-01,5,hook,"Situation, task, action, result. Under ninety seconds, with a number at the end. That's the rubric they're scoring against.",SITUATION. TASK. ACTION. RESULT.,RESULT,,,,,,,,,,,,,,,,,,
-2026-09-01,6,prompt,"This builds it from the messy version, and if there's no real result it asks you a question instead of inventing one.",,,,,,,,,,,PROMPT 17 — THE STAR STORY BUILDER,"Help me build a STAR-method answer
+2026-09-08,7,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,PROMPT 9 OF 25 · HIRED BY AI,PACK,,,,,,
+2026-09-09,1,hook,You have the story. You just don't have it in the shape they score.,YOU HAVE THE STORY. NOT IN THE SHAPE THEY SCORE.,SHAPE,,,,,,,,,,,,,,,,,,
+2026-09-09,2,hook,Behavioral interview at a US tech company coming up? Here's the rubric they score against.,THE SHAPE INTERVIEWERS ACTUALLY SCORE.,SCORE,FOR US TECH JOB SEEKERS,,,,,,,,,,,,,,,,,
+2026-09-09,3,rejection,"Miss the shape, and this is what lands the next morning. Same wording every company uses.",,,,,,,,,,,,,,,Northwind,,,Wed 4:12 AM,,
+2026-09-09,4,test,"Try it right now. Say your best work story out loud and time it. If you went past ninety seconds, they stopped listening somewhere in the middle.",SAY YOUR BEST WORK STORY OUT LOUD. TIME IT.,,90-SECOND TEST,,,,,,PAST 90 SECONDS? THEY STOPPED LISTENING,,,,,,,,,,,
+2026-09-09,5,hook,"Situation, task, action, result. Under ninety seconds, with a number at the end. That's the rubric they're scoring against.",SITUATION. TASK. ACTION. RESULT.,RESULT,,,,,,,,,,,,,,,,,,
+2026-09-09,6,prompt,"This builds it from the messy version, and if there's no real result it asks you a question instead of inventing one.",,,,,,,,,,,PROMPT 17 — THE STAR STORY BUILDER,"Help me build a STAR-method answer
 (Situation, Task, Action, Result) from the
 rough story below. Keep it under 90 seconds
 spoken. Make the Result concrete. If I'm
@@ -74,4 +74,4 @@ to draw it out rather than inventing one.
 
 THE ROUGH STORY: [PASTE what happened]
 THE QUESTION IT ANSWERS: [PASTE]",,,,,,,,
-2026-09-01,7,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,PROMPT 17 OF 25 · HIRED BY AI,PACK,,,,,,
+2026-09-09,7,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,PROMPT 17 OF 25 · HIRED BY AI,PACK,,,,,,
