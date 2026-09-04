@@ -126,6 +126,8 @@ const content = {
   // the seeding pack: a Reddit-safe comment (no link) and 3 US communities
   seed: meta.seed || '',
   communities: list(meta.communities).length ? list(meta.communities) : links.communities || [],
+  // per-video Gumroad discount code; blank = YT + MMDD, made by build.mjs
+  code: meta.code || '',
   scenes: mine.map(build),
 };
 

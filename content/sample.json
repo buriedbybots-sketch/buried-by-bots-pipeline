@@ -9,7 +9,7 @@
   ],
   "music": "pulse.wav",
   "caption": "Nobody rejected you. You were ranked #340 of 400 and a human only ever looks at page one.\n\n43% of parsing failures are formatting, not content (ResumeAdapter, 10k scans, Q1 2026).\n\nPrompt 5 of 25. Comment PACK and I will send you the free five.",
-  "pinned": "Free 5-prompt pack, no upsell in it: [LEAD MAGNET LINK]\nAll 25 (Hired by AI, $19): [PRODUCT LINK]",
+  "pinned": "Free 5-prompt pack, no upsell in it: [LEAD MAGNET LINK]\nAll 25 (Hired by AI, $19 — 10% off with code [CODE]): [PRODUCT LINK]",
   "seed": "Nobody rejected you. You were ranked #340 of 400, and a human only ever looks at page one.",
   "communities": [
     "r/resumes",
@@ -25,10 +25,10 @@
     },
     {
       "type": "hook",
-      "vo": "Applying to software jobs in the US and hearing nothing back? This is why, and the free prompt that fixes your resume.",
-      "head": "60-SECOND FIX · US TECH JOBS",
-      "text": "THIS IS WHY. AND THE FREE PROMPT THAT FIXES IT.",
-      "accent": "FIXES"
+      "vo": "Applying to software jobs in the US and hearing nothing back? Here's what actually happens to your resume, and a free prompt to check yours.",
+      "head": "FOR US TECH JOB SEEKERS",
+      "text": "WHY YOUR RESUME NEVER GOT READ.",
+      "accent": "READ"
     },
     {
       "type": "rank",

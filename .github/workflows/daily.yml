@@ -57,6 +57,7 @@ jobs:
       - name: Lint, voice and render
         env:
           PIXABAY_KEY: ${{ secrets.PIXABAY_KEY }}
+          GUMROAD_TOKEN: ${{ secrets.GUMROAD_TOKEN }}
         run: node scripts/build.mjs ${{ steps.d.outputs.date }}
 
       - name: Upload to YouTube

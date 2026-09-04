@@ -15,7 +15,8 @@ const dates = Array.from({length: days}, (_, i) => {
   return d.toISOString().slice(0, 10);
 });
 
-const run = (cmd, args) => execSync([cmd, ...args].join(' '), {stdio: 'inherit'});
+const q = (a) => (/^[\w./=:-]+$/.test(a) ? a : `"${String(a).replace(/"/g, '\\"')}"`);
+const run = (cmd, args) => execSync([cmd, ...args.map(q)].join(' '), {stdio: 'inherit'});
 const done = [];
 const failed = [];
 

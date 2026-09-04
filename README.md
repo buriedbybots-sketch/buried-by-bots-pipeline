@@ -49,7 +49,7 @@ Ranked by leverage. The pipeline has a lever for each.
 | 5 | **Retention shape** | Loop-back tail (last 0.5s = the hook, settled), hook guard (warn >2.5s spoken, fail >3s), music bed, captions sized by character budget. |
 | 6 | **Hashtags** | 3–5. The linter warns outside that range. |
 
-And the check on all of it: **`npm run geo`** prints `US: NN%` for the channel and for each recent video from the YouTube Analytics API, and sends it to Telegram every Monday. Without that number the design is unfalsifiable.
+And the checks on all of it, both sent to Telegram every Monday: **`npm run geo`** prints `US: NN%` for the channel and each recent video from the YouTube Analytics API, and **`npm run sales`** prints sales per video from Gumroad, by the discount code each video carries. Without those two numbers the design is unfalsifiable and the operator cannot tell which video to make more of.
 
 ## The sheet
 
@@ -58,7 +58,7 @@ Two tabs, named exactly `videos` and `scenes`, joined on `date`. `sheet/videos.c
 ### `videos` — one row per video
 
 ```
-date,title,description,hashtags,music,caption,pinned,seed,communities
+date,title,description,hashtags,music,caption,pinned,seed,communities,code
 ```
 
 | column | what |
@@ -72,6 +72,7 @@ date,title,description,hashtags,music,caption,pinned,seed,communities
 | `pinned` | The YouTube pinned comment. `[LEAD MAGNET LINK]`, `[PRODUCT LINK]` and `[KEYWORD]` are substituted from `content/links.json`. |
 | `seed` | **Two sentences, no link.** The Reddit-safe comment for the seeding pack. The linter fails on a link and warns past two sentences. |
 | `communities` | Three US communities, comma-separated (`r/cscareerquestions, r/resumes, r/recruitinghell`). Blank = the default trio in `links.json`. |
+| `code` | The video's Gumroad discount code. Blank = `YT` + month + day (`YT0828`). The build creates it (10% off) when `GUMROAD_TOKEN` is set, puts it in the product URL, and `[CODE]` in any copy cell becomes it. `npm run sales` reports sales per code. |
 
 ### `scenes` — one row per scene
 
@@ -95,7 +96,7 @@ date,order,type,vo,text,accent,head,to,total,caption,value,suffix,label,source,t
 | `comp` | `title`, `lines`, `sub?`, **`source`** | levels.fyi-style band. `lines` = `Base\|$185,000` one per line (a `Total` row is drawn larger); `sub` = the counter-offer delta, in orange. |
 | `terminal` | `title?`, `head?`, `lines` | ChatGPT-style answer filling in live. `head` is the user bubble (default: "Pasted my resume and the job description."); `lines` is the answer, ≤620 chars. `*stars*` turn orange. **This is the format for the demo-only prompts.** |
 
-**Every video opens the same way: a hook, then a framing scene.** The hook (scene 1, under 2.5s spoken) earns the stop. Scene 2 is a second `hook` row with `head` = `60-SECOND FIX · US TECH JOBS`, `text` = `THIS IS WHY. AND THE FREE PROMPT THAT FIXES IT.`, and a `vo` that says who this is for, what they are about to get, and that the prompt at the end is free — because a cold viewer has no idea what they are watching. Then the lesson, then the CTA. Captions run under the framing scene automatically because its voice says more than its card.
+**Every video opens the same way: a hook, then a framing scene.** The hook (scene 1, under 2.5s spoken — the linter fails a video whose scene 1 isn't a hook) earns the stop. Scene 2 is a second `hook` row with `head` = `FOR US TECH JOB SEEKERS` and a `text` + `vo` written for that video: who this is for, what they are about to get, and that the prompt at the end is free — because a cold viewer has no idea what they are watching. Write a new line each time; five identical second cards in a row is content-farm texture. Say "a free prompt to check yours", not "the prompt that fixes it" — this brand does not promise outcomes. Then the lesson, then the CTA. Captions run under the framing scene automatically because its voice says more than its card.
 
 Every scene cuts in on an orange scan wipe. Captions sit above the YouTube UI zone (`SAFE_BOTTOM` in `src/theme.js`) and switch off automatically on `hook` and `cta`.
 
@@ -109,7 +110,9 @@ Runs in `sheet.mjs` (on the way in) and `build.mjs` (before spending three minut
 
 **Warns on:** zero US-tech tokens in the transcript · no frame naming a US company/city/$/ATS · hashtags outside 3–5 · a seed comment over two sentences · not exactly three communities · a first scene that isn't a hook.
 
-If `content/protected.txt` exists (gitignored — paste the text of Vault 1, 2, 3 and 26 into it), any 8-word run of it spoken or on screen also fails the build.
+`content/protected.json` holds one-way hashes of every 8-word run of Vault 1, 2, 3 and 26 (made once with `npm run protect -- <file>`, committed). Any of those runs, spoken or on screen in any scene type, fails the build. If the file is missing the build warns locally and **fails in CI** — the rule has to hold where publishing happens.
+
+The geography check has two tiers. Topic words (`resume`, `recruiter`, `senior`, `behavioral`) are shared with every country's job seekers and count for nothing. Only geography words count — a US ATS or job board, a US city, a level like L4, a comp term like RSU or sign-on, "US tech", a `$` figure — and a transcript with none of them warns.
 
 ## What each build produces
 

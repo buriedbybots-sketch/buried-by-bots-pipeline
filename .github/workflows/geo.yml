@@ -1,4 +1,4 @@
-name: weekly geography
+name: weekly geography and sales
 
 # Where did the week's views come from? This is the number the whole
 # US-targeting design is judged against. Monday 14:00 UTC, after the daily
@@ -30,3 +30,12 @@ jobs:
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
           TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
         run: node scripts/geo.mjs ${{ inputs.days || 7 }}
+      # Which video sold. Reads Gumroad by the per-video code build.mjs put in
+      # every pinned comment; skipped cleanly when the token isn't set.
+      - name: Sales by video
+        if: always()
+        env:
+          GUMROAD_TOKEN: ${{ secrets.GUMROAD_TOKEN }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+        run: node scripts/sales.mjs ${{ inputs.days || 7 }}

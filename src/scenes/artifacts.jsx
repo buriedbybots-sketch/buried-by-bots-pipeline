@@ -54,9 +54,18 @@ const fadeAt = (frame, at, len = 10) =>
 // requirements list with the bullets that matter turned orange.
 export const Posting = ({title, company, location, pay, lines = [], source}) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
+  const {fps, durationInFrames} = useVideoConfig();
   const s = ease(frame, fps, 0, 30);
   const reqs = lines.filter((l) => l.trim());
+  // The card lands in the first second; the highlights are the story, so
+  // they arrive one at a time across the middle of the scene, and the Apply
+  // button last. A ten-second req with nothing moving reads as a screenshot.
+  const hot = reqs.map((l, i) => i).filter((i) => reqs[i].trim().startsWith('*'));
+  const hotAt = (i) => {
+    const k = hot.indexOf(i);
+    return k === -1 ? Infinity : Math.round(durationInFrames * (0.3 + (0.4 * k) / Math.max(1, hot.length - 1 || 1)));
+  };
+  const applyAt = Math.round(durationInFrames * 0.82);
 
   return (
     <div style={stage}>
@@ -82,7 +91,8 @@ export const Posting = ({title, company, location, pay, lines = [], source}) => 
           </div>
           {reqs.map((l, i) => {
             const o = fadeAt(frame, 14 + i * 5);
-            const on = frame > 30 + i * 5;
+            const on = frame >= hotAt(i);
+            const pop = on ? 1 + 0.03 * Math.max(0, 1 - (frame - hotAt(i)) / 10) : 1;
             const hot = l.trim().startsWith('*');
             return (
               <div
@@ -96,6 +106,8 @@ export const Posting = ({title, company, location, pay, lines = [], source}) => 
                   lineHeight: 1.25,
                   color: C.paper,
                   opacity: o,
+                  transform: `scale(${pop})`,
+                  transformOrigin: 'left center',
                 }}
               >
                 <span
@@ -104,6 +116,7 @@ export const Posting = ({title, company, location, pay, lines = [], source}) => 
                     width: 8,
                     borderRadius: 4,
                     background: hot && on ? C.orange : C.line,
+                    boxShadow: hot && on ? '0 0 18px 2px rgba(255,77,46,0.6)' : 'none',
                     marginTop: 4,
                   }}
                 />
@@ -124,6 +137,8 @@ export const Posting = ({title, company, location, pay, lines = [], source}) => 
               fontWeight: 800,
               letterSpacing: '1px',
               whiteSpace: 'nowrap',
+              opacity: ease(frame, fps, applyAt, 20),
+              transform: `scale(${0.9 + 0.1 * ease(frame, fps, applyAt, 20)})`,
             }}
           >
             Apply for this job

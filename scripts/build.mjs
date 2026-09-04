@@ -4,6 +4,7 @@ import {execSync} from 'node:child_process';
 import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs';
 import {enforce} from './lint.mjs';
 import {fetchPhotos} from './lib/photo.mjs';
+import {productId, ensureCode} from './lib/gumroad.mjs';
 
 // Local secrets (PIXABAY_KEY) live in a gitignored .env; CI gets them from
 // GitHub Secrets. Node 20.12+ reads the file natively — nothing to install.
@@ -12,7 +13,8 @@ if (existsSync('.env')) process.loadEnvFile('.env');
 // Content ids are dates in the scheduled pipeline, so today is the right default.
 const id = process.argv[2] || new Date().toISOString().slice(0, 10);
 
-const run = (cmd, args) => execSync([cmd, ...args].join(' '), {stdio: 'inherit'});
+const q = (a) => (/^[\w./=:-]+$/.test(a) ? a : `"${String(a).replace(/"/g, '\\"')}"`);
+const run = (cmd, args) => execSync([cmd, ...args.map(q)].join(' '), {stdio: 'inherit'});
 const fail = (msg) => {
   console.error(`\n${msg}`);
   process.exit(1);
@@ -22,7 +24,7 @@ const fail = (msg) => {
 // opening scene, not scene length — the 280ms tail and the 8-frame beat are
 // production, not hook. Warn past 2.5s, refuse past 3s.
 const HOOK_MAX_MS = 2500;
-const HOOK_HARD_MS = 3000;
+const HOOK_HARD_MS = 3200; // 3s plus room for TTS jitter — an approved hook measures 2997ms
 const TAIL_S = 0.5; // the loop-back tail, see src/theme.js
 const BED = 'pulse.wav';
 
@@ -82,11 +84,33 @@ run('npx', ['remotion', 'still', 'src/index.jsx', 'Short', `out/${id}.cover.jpg`
 // They used to each build their own strings, which is how videos went live
 // with the links missing. One object, one file, every consumer reads it.
 const hashtags = content.hashtags || [];
+
+// Per-video attribution. Each video gets its own 10% Gumroad code (YT0828
+// for 2026-08-28, or the sheet's `code` cell), the code rides inside the
+// product URL so nobody has to type it, and scripts/sales.mjs reads sales
+// back by code. Without GUMROAD_TOKEN the code can't be created, so the
+// plain product link ships and the "10% off" clause is dropped — a link to
+// a discount that doesn't exist is worse than no discount.
+const code = (content.code || `YT${id.replace(/-/g, '').slice(4)}`).toUpperCase();
+let productUrl = links.product;
+let coded = false;
+try {
+  const pid = await productId(links.product);
+  if (pid) coded = await ensureCode(pid, code);
+} catch (e) {
+  console.warn(`  ⚠ gumroad: ${e.message} — shipping the plain product link`);
+}
+if (coded) productUrl = `${links.product.replace(/\/+$/, '')}/${code}`;
+else console.warn('  ⚠ GUMROAD_TOKEN not set — no per-video code, sales will not be attributable to this video');
+
 const fill = (s) =>
   (s || '')
     .replaceAll('[LEAD MAGNET LINK]', links.leadMagnet || '[LEAD MAGNET LINK — NOT SET YET]')
-    .replaceAll('[PRODUCT LINK]', links.product)
-    .replaceAll('[KEYWORD]', links.keyword);
+    .replaceAll('[PRODUCT LINK]', productUrl)
+    .replaceAll('[KEYWORD]', links.keyword)
+    // "… — 10% off with code [CODE])" collapses to ")" when there is no code
+    .replace(/\s*[—-]\s*10% off with code \[CODE\]/g, coded ? ` — 10% off with code ${code}` : '')
+    .replaceAll('[CODE]', coded ? code : '');
 
 if (!links.leadMagnet) console.warn('\n  ⚠ content/links.json has no leadMagnet URL — the pinned comment will ship broken.');
 
@@ -128,6 +152,7 @@ const meta = {
     comment: (content.seed || '').trim(),
     communities: content.communities || [],
   },
+  code: coded ? code : null,
   seconds: Number(seconds.toFixed(1)),
 };
 

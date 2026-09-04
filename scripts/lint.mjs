@@ -6,69 +6,80 @@
 //   node scripts/lint.mjs content/sample.json
 //
 // Errors fail the build. Warnings print loudly and let it through.
+import {createHash} from 'node:crypto';
 import {existsSync, readFileSync} from 'node:fs';
 
 // --- wrong-audience tells. One of these in the transcript and the video is
-// classified for the wrong continent. Hard fail, no exceptions.
+// classified for the wrong continent. Hard fail, no exceptions. Includes the
+// vocabulary of Indian campus hiring, the job boards and the employers that
+// only mean something there, and the British spellings an Indian writer
+// reaches for by default.
 export const DENY = [
-  'CV',
-  'CVs',
-  'fresher',
-  'freshers',
-  'notice period',
-  'CTC',
-  'lakh',
-  'lakhs',
-  'crore',
-  'crores',
-  'placement',
-  'placements',
-  'aptitude round',
-  'aptitude test',
-  'HR round',
-  'tier-1 college',
-  'tier 1 college',
-  'campus drive',
+  // Indian-English job vocabulary
+  'CV', 'CVs', 'fresher', 'freshers', 'notice period', 'CTC', 'LPA', 'lakh', 'lakhs', 'crore', 'crores',
+  'placement', 'placements', 'campus placement', 'campus drive', 'on-campus', 'off-campus', 'aptitude round',
+  'aptitude test', 'HR round', 'technical round', 'tier-1 college', 'tier 1 college', 'tier-2', 'tier-3',
+  'PPO', 'passout', 'pass-out', 'pass out', 'B.Tech', 'BTech', 'M.Tech', 'MTech', 'BE/B.Tech', 'MCA', 'BCA',
+  'joining date', 'date of joining', 'service-based', 'product-based', 'service based', 'product based',
+  'bond period', 'salary package', 'package of', 'revert back', 'do the needful', 'kindly', 'prepone',
+  'mass recruiter', 'referral drive',
+  // job boards and employers that only signal India
+  'Naukri', 'Internshala', 'AmbitionBox', 'TCS', 'Infosys', 'Wipro', 'Cognizant', 'HCL', 'Tech Mahindra',
+  'Capgemini', 'Zoho',
+  // British spellings
+  'organisation', 'organisations', 'organise', 'organised', 'optimise', 'optimised', 'optimising', 'optimisation',
+  'specialise', 'specialised', 'realise', 'realised', 'recognise', 'recognised', 'prioritise', 'prioritised',
+  'summarise', 'customise', 'customised', 'analyse', 'analysed', 'behaviour', 'behavioural', 'colour', 'favourite',
+  'honour', 'labour', 'programme', 'centre', 'licence', 'defence', 'catalogue', 'learnt', 'whilst', 'amongst',
 ];
 
 // --- identity the operator does not have. Speaking American English is
-// translation; claiming to be American, a recruiter, or a FAANG hire is fraud.
+// translation; claiming to be American, a recruiter, an insider or a hire is
+// fraud. Written to catch the natural phrasings, not just the formal ones.
+const BIG = '(?:google|meta|facebook|amazon|apple|microsoft|netflix|openai|nvidia|stripe|uber|airbnb|faang|a faang|big tech)';
 export const IDENTITY = [
-  /\bas a recruiter\b/i,
-  /\bi(?:'m| am) an? (?:recruiter|hiring manager|american|us citizen)\b/i,
-  /\bi (?:got|landed|accepted|took|signed) (?:an?|my|the) (?:\w+ )?offer\b/i,
-  /\bwhen i (?:got|was) hired\b/i,
-  /\bmy (?:faang|google|meta|amazon|apple|netflix|microsoft|openai) offer\b/i,
-  /\bhere in the (?:us|states|bay area|valley)\b/i,
-  /\bwe (?:hire|hired|reject|rejected) (?:you|people|candidates)\b/i,
+  /\bas an? (?:recruiter|hiring manager|engineering manager|sourcer|talent partner)\b/i,
+  /\bi(?:'m| am| was|'ve been| have been) (?:an? |the )?(?:recruiter|hiring manager|sourcer|american|us citizen|engineer at)\b/i,
+  /\bi (?:have |'ve )?(?:hired|interviewed|screened|rejected|reviewed|read) (?:\w+ ){0,3}(?:candidates|engineers|resumes|applicants|people)\b/i,
+  /\bi (?:got|landed|took|accepted|signed|received) (?:the|an?|my) (?:\w+ )?(?:job|role|position|offer)\b/i,
+  /\bi (?:work|worked|am working|joined|interned) (?:at|for) /i,
+  /\bwhen i (?:got|was|joined|started) (?:hired|at|there|recruiting)\b/i,
+  new RegExp(`\\bmy (?:\\w+ )?(?:offer|job|team|manager|desk|badge) at ${BIG}\\b`, 'i'),
+  new RegExp(`\\b(?:at|from|inside) ${BIG}\\b,? (?:we|i|our)\\b`, 'i'),
+  /\b(?:after|with) (?:\w+ |\d+ )?years? (?:in|of|as a) (?:tech )?(?:recruit|hiring|sourcing)/i,
+  /\b(?:we|our team|my team) (?:hire|hired|reject|rejected|screen|screened|interview|interviewed) /i,
+  /\bhere in the (?:us|states|bay area|valley|city)\b/i,
 ];
 
-// --- what "US tech job seeker" sounds like. Zero of these across a video's
-// transcript is a loud warning, not a failure — some videos are about the
-// process, not the products — but it should never happen by accident.
-export const US_SIGNAL = [
-  'workday', 'greenhouse', 'lever', 'taleo', 'icims', 'ashby',
-  'linkedin', 'indeed', 'levels.fyi', 'blind', 'hiring cafe',
-  'software engineer', 'swe', 'backend', 'front-end', 'frontend', 'full stack', 'full-stack',
-  'data engineer', 'data scientist', 'product manager', 'new grad', 'l4', 'l5', 'l6', 'ic5', 'senior', 'staff engineer',
-  'total comp', 'rsu', 'rsus', 'equity refresh', 'sign-on', 'signing bonus', 'base salary',
-  'recruiter', 'recruiter screen', 'hiring manager', 'onsite', 'take-home', 'system design', 'behavioral',
-  'layoffs', 'laid off', 'rto', 'hiring freeze', 'ghost job', 'ghost jobs', 'req',
-  'resume', 'resumes', 'ats', 'applicant tracking', 'faang',
+// --- what "US tech job seeker" sounds like. Two tiers. STRONG tokens are
+// geography: a US product, board, city, level, comp term or a $ figure —
+// things nobody outside the US says. TOPIC tokens are just the subject and
+// are shared with every country's job seekers, so they count for nothing
+// on their own. A transcript with zero STRONG tokens warns, loudly.
+export const US_STRONG = [
+  'workday', 'greenhouse', 'lever', 'taleo', 'icims', 'ashby', 'linkedin', 'indeed', 'levels.fyi', 'blind app',
+  'hiring cafe', 'glassdoor', 'faang', 'us tech', 'us job', 'us jobs', 'in the us', 'united states', 'american',
+  'silicon valley', 'bay area', 'san francisco', 'new york', 'nyc', 'seattle', 'austin', 'denver', 'boston',
+  'chicago', 'remote in the us', 'us remote', 'h-1b', 'h1b', 'l3', 'l4', 'l5', 'l6', 'e4', 'e5', 'ic4', 'ic5',
+  'new grad', 'total comp', 'rsu', 'rsus', 'equity refresh', 'sign-on', 'signing bonus', 'base salary', '401k',
+  'layoffs', 'laid off', 'rto', 'hiring freeze', 'ghost job', 'ghost jobs',
 ];
-
-// A frame that names a US company, city, $ figure or ATS product. The artifact
-// scenes do this by construction; anything else has to earn it in its text.
-const US_VISUAL_TYPES = new Set(['posting', 'rejection', 'comp', 'market']);
-const US_VISUAL =
-  /\$\s?\d|\b(?:San Francisco|New York|NYC|Seattle|Austin|Denver|Boston|Chicago|Bay Area|Remote \(US\)|Workday|Greenhouse|Lever|Taleo|iCIMS|Ashby|levels\.fyi|LinkedIn|Indeed)\b|, (?:CA|NY|WA|TX|MA|CO|IL|GA|NC)\b/;
+export const US_TOPIC = [
+  'software engineer', 'swe', 'backend', 'frontend', 'full stack', 'data engineer', 'data scientist',
+  'product manager', 'senior', 'staff engineer', 'recruiter', 'recruiter screen', 'hiring manager', 'onsite',
+  'take-home', 'system design', 'behavioral', 'resume', 'resumes', 'ats', 'applicant tracking', 'req',
+];
 
 // Vault Prompts 1, 2, 3 and 26 are demo-only: show the output (terminal
-// scene), never the prompt text. A `prompt` scene titled after one of them is
-// refused outright. If content/protected.txt exists (gitignored — it is the
-// product) its text is fingerprinted and any 8-word run of it, on screen or
-// spoken, is refused too.
+// scene), never the prompt text. Two guards. A `prompt` scene titled after
+// one of them is refused outright. And content/protected.json — hashed
+// 8-word shingles of the actual prompt text, made once with
+// scripts/protect.mjs, safe to commit because the hashes are one-way —
+// refuses any run of that text, spoken or on screen, in any scene type.
+// In CI the fingerprint file is mandatory: without it the hardest content
+// rule is unenforced exactly where publishing happens.
 const PROTECTED_TITLE = /\bprompt\s*#?\s*(?:0?1|0?2|0?3|26)\b(?![\d.])/i;
+const PROTECTED_FILE = 'content/protected.json';
 
 // What each scene type has to carry to render at all, plus which ones show a
 // number and therefore need a source chip.
@@ -86,28 +97,34 @@ export const REQUIRED = {
   terminal: ['lines'],
 };
 
+const US_VISUAL_TYPES = new Set(['posting', 'rejection', 'comp', 'market']);
+
 const ON_SCREEN = [
   'text', 'accent', 'head', 'caption', 'label', 'source', 'title', 'sub', 'keyword',
   'step', 'result', 'kicker', 'company', 'location', 'pay', 'time',
 ];
 
 const norm = (s) => String(s ?? '').replace(/\s+/g, ' ').trim();
-const words8 = (s) =>
+const wordsOf = (s) =>
   norm(s)
     .toLowerCase()
     .replace(/[^a-z0-9 ]/g, '')
     .split(' ')
     .filter(Boolean);
 
-const shingles = (text) => {
-  const w = words8(text);
+export const shingles = (text) => {
+  const w = wordsOf(text);
   const out = new Set();
   for (let i = 0; i + 8 <= w.length; i++) out.add(w.slice(i, i + 8).join(' '));
   return out;
 };
+export const digest = (s) => createHash('sha256').update(s).digest('hex').slice(0, 24);
 
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const wordRe = (term, flags = 'i') => new RegExp(`(?<![\\w$])${escapeRe(term)}(?![\\w])`, flags);
+// short all-caps terms (CV, CTC, LPA, PPO, TCS, HCL, MCA…) match case-sensitively,
+// everything else case-insensitively
+const denyRe = (term) => (term === term.toUpperCase() && term.length <= 4 ? wordRe(term, '') : wordRe(term));
 
 const screenText = (scene) =>
   ON_SCREEN.map((k) => scene[k])
@@ -115,7 +132,7 @@ const screenText = (scene) =>
     .filter(Boolean)
     .join('\n');
 
-export const lint = (content, {protectedText} = {}) => {
+export const lint = (content, {protectedHashes, ci = false} = {}) => {
   const errors = [];
   const warnings = [];
   const scenes = content.scenes || [];
@@ -143,7 +160,8 @@ export const lint = (content, {protectedText} = {}) => {
       errors.push(`${tag}: every line must be "Label|value"`);
     }
   });
-  if (scenes.length && scenes[0].type !== 'hook') warnings.push(`scene 1 is a ${scenes[0].type}, not a hook`);
+  // The hook guard in build.mjs measures scene 1. It has to be the hook.
+  if (scenes.length && scenes[0].type !== 'hook') errors.push(`scene 1 is a ${scenes[0].type} — every video opens on a hook`);
 
   // ---- vocabulary: spoken and on-screen, plus the copy that ships with it
   const spoken = scenes.map((s) => s.vo || '').join('\n');
@@ -154,42 +172,49 @@ export const lint = (content, {protectedText} = {}) => {
   const everything = [spoken, shown, copy].join('\n');
 
   for (const term of DENY) {
-    const re = term === term.toUpperCase() && term.length <= 4 ? wordRe(term, '') : wordRe(term);
+    const re = denyRe(term);
     const hit = everything.match(re);
     if (hit) {
       const where = spoken.match(re) ? 'spoken' : shown.match(re) ? 'on screen' : 'in the post copy';
-      errors.push(`wrong-audience word "${hit[0]}" ${where} — say it the American way (CV → resume, fresher → new grad)`);
+      errors.push(`wrong-audience word "${hit[0]}" ${where} — say it the American way (CV → resume, fresher → new grad, optimise → optimize)`);
     }
   }
   for (const re of IDENTITY) {
     const hit = everything.match(re);
-    if (hit) errors.push(`identity claim "${hit[0]}" — the operator is the person who tested the tools, not a recruiter or a hire`);
+    if (hit) errors.push(`identity claim "${hit[0].trim()}" — the operator is the person who tested the tools, not a recruiter, an insider or a hire`);
   }
 
-  const signals = US_SIGNAL.filter((t) => wordRe(t).test(spoken));
-  if (/\$\s?\d+k?\b/i.test(spoken)) signals.push('$ figure');
-  if (!signals.length) {
+  const strong = US_STRONG.filter((t) => wordRe(t).test(spoken));
+  if (/\$\s?\d[\d,]*k?\b/i.test(spoken) || /\b\d{2,3}k\b/i.test(spoken)) strong.push('$ figure');
+  const topic = US_TOPIC.filter((t) => wordRe(t).test(spoken));
+  if (!strong.length) {
     warnings.push(
-      'the transcript has ZERO US-tech tokens. ASR classifies topic from the voice — name an ATS, a job board, a role, a $ figure or a US process word in at least one vo line'
+      'the transcript has ZERO geography signals. Topic words (' +
+        (topic.join(', ') || 'none') +
+        ') are shared with every country; name a US ATS, job board, city, level, comp term or $ figure in a vo line'
     );
   }
-  const visual = scenes.some((s) => US_VISUAL_TYPES.has(s.type) || US_VISUAL.test(screenText(s)));
-  if (!visual) {
-    warnings.push('no frame names a US company, city, $ figure or ATS product — add a posting/rejection/comp/market scene or put one in a title');
+  if (!scenes.some((s) => US_VISUAL_TYPES.has(s.type))) {
+    warnings.push('no artifact scene (posting/rejection/comp/market) — no frame shows a piece of US software');
   }
 
-  // ---- protected prompt text, if the fingerprint file exists
-  if (protectedText) {
-    const bad = shingles(protectedText);
+  // ---- protected prompt text
+  if (protectedHashes) {
+    const bad = new Set(protectedHashes);
     const check = (label, text) => {
       for (const sh of shingles(text)) {
-        if (bad.has(sh)) return errors.push(`${label} contains Vault 1/2/3/26 prompt text ("${sh}…") — demo-only, show the output instead`);
+        if (bad.has(digest(sh))) return errors.push(`${label} contains Vault 1/2/3/26 prompt text ("${sh}…") — demo-only, show the output instead`);
       }
     };
     scenes.forEach((s, i) => {
       check(`scene ${i + 1} vo`, s.vo);
       check(`scene ${i + 1} screen text`, screenText(s));
     });
+    check('post copy', copy);
+  } else {
+    (ci ? errors : warnings).push(
+      `${PROTECTED_FILE} is missing — Vault 1/2/3/26 text is unguarded. Run: node scripts/protect.mjs <file with the four prompts>`
+    );
   }
 
   // ---- the conversion path. A video with no keyword CTA and no link in the
@@ -216,17 +241,17 @@ export const lint = (content, {protectedText} = {}) => {
   const comms = content.communities || [];
   if (comms.length !== 3) warnings.push(`${comms.length} communities named — the seeding pack wants exactly 3`);
 
-  return {errors, warnings, signals};
+  return {errors, warnings, signals: strong, topic};
 };
 
-export const protectedText = () => (existsSync('content/protected.txt') ? readFileSync('content/protected.txt', 'utf8') : null);
+export const protectedHashes = () => (existsSync(PROTECTED_FILE) ? JSON.parse(readFileSync(PROTECTED_FILE, 'utf8')).hashes : null);
 
 // Print the report; throw if it failed.
 export const enforce = (content) => {
-  const {errors, warnings, signals} = lint(content, {protectedText: protectedText()});
+  const {errors, warnings, signals} = lint(content, {protectedHashes: protectedHashes(), ci: Boolean(process.env.CI)});
   for (const w of warnings) console.warn(`  ⚠ ${w}`);
   for (const e of errors) console.error(`  ✖ ${e}`);
-  if (signals.length) console.log(`  US signals in transcript: ${signals.join(', ')}`);
+  if (signals.length) console.log(`  geography signals: ${signals.join(', ')}`);
   if (errors.length) throw new Error(`lint: ${errors.length} error(s) in ${content.id} — fix the sheet row`);
   return {errors, warnings};
 };

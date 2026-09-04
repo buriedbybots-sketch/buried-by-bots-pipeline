@@ -19,7 +19,7 @@ let from = 0;
 content.scenes.forEach((scene, i) => {
   const frame = from + Math.min(at, lens[i] - 1);
   const file = `out/stills/${id}-${i + 1}-${scene.type}.jpg`;
-  execSync(`npx remotion still src/index.jsx Short ${file} --frame=${frame} --props=out/${id}.props.json`, {stdio: 'ignore'});
+  execSync(`npx remotion still src/index.jsx Short "${file}" --frame=${frame} "--props=out/${id}.props.json"`, {stdio: 'ignore'});
   console.log(`${file}  (frame ${frame})`);
   from += lens[i];
 });

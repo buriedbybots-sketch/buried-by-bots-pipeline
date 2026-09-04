@@ -81,7 +81,7 @@ The workflow has a `privacy` input, so once an audit clears you set it to `publi
 
 ## 5. Add the secrets
 
-Repo → **Settings → Secrets and variables → Actions → New repository secret**. Seven of them:
+Repo → **Settings → Secrets and variables → Actions → New repository secret**. Eight of them:
 
 | Secret | Where it came from |
 |---|---|
@@ -91,7 +91,8 @@ Repo → **Settings → Secrets and variables → Actions → New repository sec
 | `YT_REFRESH_TOKEN` | Step 4 — issued with all three scopes |
 | `TG_BOT_TOKEN` | Step 3 — from BotFather |
 | `TG_CHAT_ID` | Step 3 — from getUpdates |
-| `PIXABAY_KEY` | Optional — a free key from pixabay.com/api/docs, only if you use the `photo` column |
+| `PIXABAY_KEY` | Optional — a free key from pixabay.com/api/docs, for the stock backdrops |
+| `GUMROAD_TOKEN` | Gumroad → Settings → Advanced → Applications → create one → **Generate access token**. Lets each video mint its own 10% code and lets `sales.mjs` read sales back by code. Without it, sales are real but unattributable. |
 
 The Telegram pair is optional. Leave them out and the run still renders and uploads; it just skips phone delivery (and the seeding pack, and the weekly geography report) and says so. `PIXABAY_KEY` is optional too: without it, scenes that name a photo render without the backdrop.
 
@@ -124,7 +125,7 @@ If the upload step fails, the mp4 is still saved as a workflow artifact and stil
                                        named communities, from the personal Reddit account. No link. First hour.
 20:00-20:30 IST (10:30-11:00 AM ET)    post the Reel to Instagram by hand
 
-Monday 14:00 UTC                       geo.yml → "US: NN%" for the channel and each video, to Telegram
+Monday 14:00 UTC                       geo.yml → "US: NN%" per video, then "YT0828 → 3 sales" per video, to Telegram
 ```
 
 The seeding step is the highest-leverage thing on this list. Who sees the first ~50 views decides who the algorithm shows the next 5,000 to, and the pipeline cannot choose them — you can.
@@ -132,6 +133,11 @@ The seeding step is the highest-leverage thing on this list. Who sees the first 
 GitHub delays scheduled runs under load, so treat 13:00 UTC as "sometime in the next hour" rather than a broadcast slot.
 
 ---
+
+## Two things to do once, before the first upload
+
+1. **Fingerprint the protected prompts.** Put the text of Vault Prompts 1, 2, 3 and 26 in a file outside the repo and run `node scripts/protect.mjs <that file>`. It writes `content/protected.json` — one-way hashes, no text — and you commit that. The linter then refuses any 8-word run of those prompts in any scene, spoken or on screen. **In CI the build fails until this file exists**, because it is the one content rule that cannot be enforced by reading the sheet.
+2. **Create the `GUMROAD_TOKEN` secret** so every video gets its own discount code. This is the only way the pipeline can ever tell you which video sold.
 
 ## The number that decides whether any of this is working
 
