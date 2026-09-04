@@ -192,6 +192,16 @@ export const lint = (content, {protectedText} = {}) => {
     });
   }
 
+  // ---- the conversion path. A video with no keyword CTA and no link in the
+  // pinned comment can be seen by exactly the right people and still sell
+  // nothing. Every video carries the whole path or it does not build.
+  const cta = scenes.find((s) => s.type === 'cta');
+  if (!cta) errors.push('no cta scene — every video ends on the keyword CTA, or the view is wasted');
+  else if (!cta.keyword) errors.push('the cta scene has no keyword — "link in bio" is four taps, a comment is one');
+  if (!/\[LEAD MAGNET LINK\]|https?:\/\//.test(content.pinned || '')) {
+    errors.push('the pinned comment has no link — put [LEAD MAGNET LINK] in the pinned cell; that comment is where the click happens');
+  }
+
   // ---- post copy
   if ((content.title || '').length > 100) errors.push(`title is ${content.title.length} chars; YouTube caps at 100`);
   const tags = content.hashtags || [];
