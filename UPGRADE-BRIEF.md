@@ -1,7 +1,8 @@
 # Pipeline audit + upgrade brief
 
 **For:** whichever model picks up the upgrade. Everything needed is in here; you should not have to guess.
-**Written:** 2026-09-04, against the repo as it stands.
+**Written:** 2026-09-04, against the repo as it stood that morning.
+**Status:** the upgrade this brief asked for landed on the `redesign` branch the same day. Sections 3–5 describe the *before*; `README.md` describes the *after*. Kept as the record of why.
 **Goal of the upgrade:** every view this pipeline earns should come from a **US tech job seeker**. Not "job seekers." Not "AI content watchers." US software engineers, data people, PMs and designers who are applying and hearing nothing back.
 
 ---

@@ -53,11 +53,14 @@ The bot sends the mp4 as a **document**, not a video, so Telegram doesn't re-enc
 In [Google Cloud Console](https://console.cloud.google.com): new project → enable **YouTube Data API v3** → **OAuth client ID** (type: Desktop app) → on the consent screen add **both** of these scopes, then add your channel's Google account as a test user:
 
 ```
-https://www.googleapis.com/auth/youtube.upload      ← uploads the video
-https://www.googleapis.com/auth/youtube.force-ssl   ← posts the pinned comment
+https://www.googleapis.com/auth/youtube.upload           ← uploads the video
+https://www.googleapis.com/auth/youtube.force-ssl        ← posts the pinned comment
+https://www.googleapis.com/auth/yt-analytics.readonly    ← reads viewer geography (geo.mjs)
 ```
 
-**Both, not just the first.** With `youtube.upload` alone the upload works but the comment carrying your lead-magnet link 403s, and Shorts viewers open the comments far more often than the bio. If you already issued a refresh token with only the upload scope, reissue it — adding a scope to the consent screen does not upgrade a token that already exists.
+And enable **two** APIs on the project, not one: **YouTube Data API v3** and **YouTube Analytics API**. The second one is what answers "what percentage of my views are from the US" — the number this whole channel is judged against.
+
+**All three, not just the first.** With `youtube.upload` alone the upload works but the comment carrying your lead-magnet link 403s, and Shorts viewers open the comments far more often than the bio. If you already issued a refresh token with only the upload scope, reissue it — adding a scope to the consent screen does not upgrade a token that already exists.
 
 One thing no scope can do: **pin** the comment. The Data API has no pin endpoint, it's Studio-only. The pipeline posts the comment; you tap pin once, in the same visit where you flip the video public.
 
@@ -78,18 +81,21 @@ The workflow has a `privacy` input, so once an audit clears you set it to `publi
 
 ## 5. Add the secrets
 
-Repo → **Settings → Secrets and variables → Actions → New repository secret**. Six of them:
+Repo → **Settings → Secrets and variables → Actions → New repository secret**. Seven of them:
 
 | Secret | Where it came from |
 |---|---|
 | `SHEET_ID` | Step 2 — the id from the sheet URL |
 | `YT_CLIENT_ID` | Step 4 |
 | `YT_CLIENT_SECRET` | Step 4 |
-| `YT_REFRESH_TOKEN` | Step 4 |
+| `YT_REFRESH_TOKEN` | Step 4 — issued with all three scopes |
 | `TG_BOT_TOKEN` | Step 3 — from BotFather |
 | `TG_CHAT_ID` | Step 3 — from getUpdates |
+| `PIXABAY_KEY` | Optional — a free key from pixabay.com/api/docs, only if you use the `photo` column |
 
-The Telegram pair is optional. Leave them out and the run still renders and uploads; it just skips phone delivery and says so.
+The Telegram pair is optional. Leave them out and the run still renders and uploads; it just skips phone delivery (and the seeding pack, and the weekly geography report) and says so. `PIXABAY_KEY` is optional too: without it, scenes that name a photo render without the backdrop.
+
+**Never paste any of these into a chat.** A key that has been in a chat log is a key to rotate.
 
 ---
 
@@ -113,13 +119,23 @@ If the upload step fails, the mp4 is still saved as a workflow artifact and stil
                                        build.mjs   -> out/<date>.mp4 + cover + post.txt
                                        upload.mjs  -> YouTube (private)
                                        deliver.mjs -> your phone
-~18:35 IST                             flip the video public in Studio (20 seconds)
+~18:35 IST                             flip the video public in Studio (20 seconds), pin the comment
+~18:40 IST                             SEED: post the two-sentence comment from the Telegram pack in the three
+                                       named communities, from the personal Reddit account. No link. First hour.
 20:00-20:30 IST (10:30-11:00 AM ET)    post the Reel to Instagram by hand
+
+Monday 14:00 UTC                       geo.yml → "US: NN%" for the channel and each video, to Telegram
 ```
+
+The seeding step is the highest-leverage thing on this list. Who sees the first ~50 views decides who the algorithm shows the next 5,000 to, and the pipeline cannot choose them — you can.
 
 GitHub delays scheduled runs under load, so treat 13:00 UTC as "sometime in the next hour" rather than a broadcast slot.
 
 ---
+
+## The number that decides whether any of this is working
+
+`node scripts/geo.mjs` (or the Monday workflow) prints the US share of views for the channel and for each recent video. Read it every week. Above 60% — the vocabulary and the artifact scenes are doing their job. Between 35% and 60% — drifting; put a `posting`, `comp` or `market` scene in every video that week and seed only in US subs. Below 35% — the wrong continent is being trained on the channel. Stop posting until the next three scripts name a US ATS, a $ figure and a US city in the first ten seconds. A mediocre video seen by the right people is recoverable; a successful one seen by the wrong people is not.
 
 ## One open question worth answering before you automate
 
