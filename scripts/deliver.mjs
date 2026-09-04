@@ -73,18 +73,29 @@ if (existsSync(coverPath)) {
 
 // The Instagram caption on its own, because a document caption is capped at
 // 1024 characters and because a standalone message is easier to long-press and
-// copy on a phone.
-const post = existsSync(`out/${date}.post.txt`) ? readFileSync(`out/${date}.post.txt`, 'utf8') : '';
-const igCaption = post.split('--- INSTAGRAM CAPTION ---')[1]?.trim();
+// copy on a phone. Read from meta.json rather than scraping post.txt — same
+// strings the uploader used, no text-splitting to go stale.
+const metaPath = `out/${date}.meta.json`;
+const meta = existsSync(metaPath) ? JSON.parse(readFileSync(metaPath, 'utf8')) : {};
 
 const msg = new FormData();
 msg.append('chat_id', TG_CHAT_ID);
 msg.append(
   'text',
-  igCaption
-    ? `POST THE REEL AT:  ${IG_WINDOW}\n\nCaption below — copy from here down.\n\n${igCaption}`
-    : `POST THE REEL AT:  ${IG_WINDOW}\n\n(No caption found in out/${date}.post.txt — check the build.)`
+  meta.igCaption
+    ? `POST THE REEL AT:  ${IG_WINDOW}\n\nCaption below — copy from here down.\n\n${meta.igCaption}`
+    : `POST THE REEL AT:  ${IG_WINDOW}\n\n(No caption in ${metaPath} — check the build.)`
 );
 await api('sendMessage', msg);
+
+// The pinned comment goes out too. upload.mjs posts it automatically, but it
+// still has to be *pinned* by hand — the API has no pin endpoint — and if the
+// token is missing the comment scope this message is the fallback.
+if (meta.pinned) {
+  const pin = new FormData();
+  pin.append('chat_id', TG_CHAT_ID);
+  pin.append('text', `PIN THIS COMMENT on the Short (Studio > Comments):\n\n${meta.pinned}`);
+  await api('sendMessage', pin);
+}
 
 console.log(`delivered ${date}.mp4 (${mb}MB) to Telegram`);

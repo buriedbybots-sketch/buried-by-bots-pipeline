@@ -23,7 +23,9 @@ for (const [k, v] of Object.entries({YT_CLIENT_ID, YT_CLIENT_SECRET, YT_REFRESH_
   }
 }
 
-const content = JSON.parse(readFileSync(`content/${date}.json`, 'utf8'));
+// Read the copy build.mjs produced. Do NOT rebuild the description here — that
+// is exactly how videos went live with no lead-magnet or product link in them.
+const meta = JSON.parse(readFileSync(`out/${date}.meta.json`, 'utf8'));
 const video = readFileSync(`out/${date}.mp4`);
 
 const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
@@ -39,18 +41,23 @@ const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
 if (!tokenRes.ok) throw new Error(`token refresh failed: ${await tokenRes.text()}`);
 const {access_token} = await tokenRes.json();
 
-const tags = (content.hashtags || []).map((h) => h.replace(/^#/, ''));
 const metadata = {
   snippet: {
-    title: content.title,
-    // #Shorts in the description is the signal YouTube still reads; the 9:16
+    // YouTube truncates past 100 characters. Fail loudly rather than ship a
+    // title that stops mid-word.
+    title: meta.title,
+    // Carries the links. #Shorts is the signal YouTube still reads; the 9:16
     // aspect and sub-60s length do the rest.
-    description: `${content.description}\n\n${(content.hashtags || []).join(' ')} #Shorts`.trim(),
-    tags,
+    description: meta.description,
+    tags: meta.tags,
     categoryId: '22', // People & Blogs
   },
   status: {privacyStatus: privacy, selfDeclaredMadeForKids: false},
 };
+
+if (meta.title.length > 100) {
+  throw new Error(`title is ${meta.title.length} chars, YouTube caps at 100: "${meta.title}"`);
+}
 
 const boundary = 'bbb' + '-'.repeat(8) + Date.now().toString(36);
 const body = Buffer.concat([
@@ -77,3 +84,46 @@ if (!res.ok) throw new Error(`upload failed: ${res.status} ${await res.text()}`)
 
 const {id} = await res.json();
 console.log(`uploaded ${privacy}: https://youtube.com/shorts/${id}`);
+
+// --- the pinned comment, where the link actually gets clicked ---------------
+//
+// Shorts viewers open the comments far more than the bio, so this is the
+// channel's real conversion surface. Posting it is an API call; *pinning* it
+// is not — the Data API has no pin endpoint, it's Studio-only. So: post it
+// here, pin it by hand once.
+//
+// This needs the `youtube.force-ssl` scope. If the refresh token was issued
+// with `youtube.upload` alone the insert 403s — in that case say so clearly
+// and carry on, because a successful upload should not be reported as a
+// failed run over a comment.
+if (!meta.pinned) {
+  console.warn('no pinned comment text for this video — nothing to post.');
+} else {
+  const commentRes = await fetch(
+    'https://www.googleapis.com/youtube/v3/commentThreads?part=snippet',
+    {
+      method: 'POST',
+      headers: {authorization: `Bearer ${access_token}`, 'content-type': 'application/json'},
+      body: JSON.stringify({
+        snippet: {
+          videoId: id,
+          topLevelComment: {snippet: {textOriginal: meta.pinned}},
+        },
+      }),
+    }
+  );
+
+  if (commentRes.ok) {
+    console.log(`posted the link comment. Pin it in Studio: https://studio.youtube.com/video/${id}/comments`);
+  } else {
+    const body = await commentRes.text();
+    const scopeProblem = commentRes.status === 403 && /insufficient|scope/i.test(body);
+    console.warn(
+      scopeProblem
+        ? 'could not post the comment: the refresh token lacks the youtube.force-ssl scope. ' +
+            'Reissue it with that scope added (see DEPLOY.md). Post this by hand meanwhile:\n\n' +
+            meta.pinned
+        : `could not post the comment (${commentRes.status}). Post this by hand:\n\n${meta.pinned}\n\n${body}`
+    );
+  }
+}

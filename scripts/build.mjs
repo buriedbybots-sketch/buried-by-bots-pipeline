@@ -51,40 +51,60 @@ if (!links.leadMagnet) {
   console.warn('\n  ⚠ content/links.json has no leadMagnet URL — the pinned comment will ship broken.');
 }
 
+// Every downstream consumer reads these exact strings — upload.mjs for the
+// YouTube description and pinned comment, deliver.mjs for the Instagram
+// caption. They used to each build their own copy, which is how videos went
+// live with the links missing. Build once here, write once, read everywhere.
+const meta = {
+  id,
+  title: content.title,
+  description: fill(
+    `${content.description}\n\n` +
+      `Free 5-prompt pack: [LEAD MAGNET LINK]\n` +
+      `The full toolkit: [PRODUCT LINK]\n\n` +
+      `${tags} #Shorts`
+  ).trim(),
+  pinned: fill(content.pinned).trim(),
+  igCaption: fill(
+    [
+      content.caption || content.description,
+      // most captions already work the keyword in — don't say it twice
+      (content.caption || '').includes(links.keyword)
+        ? null
+        : `Comment ${links.keyword} and I'll send it, or it's in the bio.`,
+      tags,
+    ]
+      .filter(Boolean)
+      .join('\n\n')
+  ).trim(),
+  tags: (content.hashtags || []).map((h) => h.replace(/^#/, '')),
+};
+
+if (!meta.pinned) {
+  console.warn('  ⚠ no "pinned" cell in the sheet for this row — the video will ship with no pinned comment.');
+}
+
+writeFileSync(`out/${id}.meta.json`, JSON.stringify(meta, null, 2));
+
+// The human-readable twin, for posting by hand. Same strings, no second source.
 writeFileSync(
   `out/${id}.post.txt`,
   [
     `--- YOUTUBE TITLE ---`,
-    content.title,
+    meta.title,
     ``,
     `--- YOUTUBE DESCRIPTION ---`,
-    fill(
-      `${content.description}\n\n` +
-        `Free 5-prompt pack: [LEAD MAGNET LINK]\n` +
-        `The full 25-prompt toolkit: [PRODUCT LINK]\n\n` +
-        `${tags} #Shorts`
-    ).trim(),
+    meta.description,
     ``,
-    `--- YOUTUBE PINNED COMMENT (pin this, it outperforms the bio) ---`,
-    fill(content.pinned) || '(none set in the sheet)',
+    `--- YOUTUBE PINNED COMMENT (the pipeline posts this; you still pin it in Studio) ---`,
+    meta.pinned || '(none set in the sheet)',
     ``,
     // Instagram strips links from captions, so the CTA there is the keyword and
     // the bio — never a pasted URL.
     `--- INSTAGRAM CAPTION (no clickable links on IG — keyword + bio only) ---`,
-    fill(
-      [
-        content.caption || content.description,
-        // most captions already work the keyword in — don't say it twice
-        (content.caption || '').includes(links.keyword)
-          ? null
-          : `Comment ${links.keyword} and I'll send it, or it's in the bio.`,
-        tags,
-      ]
-        .filter(Boolean)
-        .join('\n\n')
-    ).trim(),
+    meta.igCaption,
     ``,
   ].join('\n')
 );
 
-console.log(`\ndone -> out/${id}.mp4  +  .cover.jpg  +  .post.txt`);
+console.log(`\ndone -> out/${id}.mp4  +  .cover.jpg  +  .post.txt  +  .meta.json`);

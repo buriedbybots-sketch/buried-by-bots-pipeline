@@ -50,7 +50,16 @@ The bot sends the mp4 as a **document**, not a video, so Telegram doesn't re-enc
 
 ## 4. YouTube API access
 
-In [Google Cloud Console](https://console.cloud.google.com): new project → enable **YouTube Data API v3** → **OAuth client ID** (type: Desktop app) → on the consent screen add the `https://www.googleapis.com/auth/youtube.upload` scope and add your channel's Google account as a test user.
+In [Google Cloud Console](https://console.cloud.google.com): new project → enable **YouTube Data API v3** → **OAuth client ID** (type: Desktop app) → on the consent screen add **both** of these scopes, then add your channel's Google account as a test user:
+
+```
+https://www.googleapis.com/auth/youtube.upload      ← uploads the video
+https://www.googleapis.com/auth/youtube.force-ssl   ← posts the pinned comment
+```
+
+**Both, not just the first.** With `youtube.upload` alone the upload works but the comment carrying your lead-magnet link 403s, and Shorts viewers open the comments far more often than the bio. If you already issued a refresh token with only the upload scope, reissue it — adding a scope to the consent screen does not upgrade a token that already exists.
+
+One thing no scope can do: **pin** the comment. The Data API has no pin endpoint, it's Studio-only. The pipeline posts the comment; you tap pin once, in the same visit where you flip the video public.
 
 Run the consent flow once on your machine to get a refresh token. You'll end up with three values: client id, client secret, refresh token.
 
