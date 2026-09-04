@@ -2,7 +2,6 @@ import React, {useMemo} from 'react';
 import {
   AbsoluteFill,
   Audio,
-  Freeze,
   Img,
   Sequence,
   interpolate,
@@ -221,11 +220,16 @@ export const Short = ({content, audio}) => {
 
       {/* The loop-back tail: half a second of the opening scene, settled, so a
           replay lands on the question the video started with. Shorts loop by
-          default and replays are weighted heavily. */}
+          default and replays are weighted heavily.
+
+          Not <Freeze>: Remotion clamps a frozen frame to the composition's
+          length, and this sits at the very end, so Freeze would show the
+          hook mid-spring. A negative-offset Sequence hands the hook frames
+          SETTLED..SETTLED+TAIL instead — every word landed, nothing moving. */}
       <Sequence from={body} durationInFrames={TAIL_FRAMES}>
-        <Freeze frame={SETTLED}>
+        <Sequence from={-SETTLED} durationInFrames={SETTLED + TAIL_FRAMES}>
           <First {...content.scenes[0]} />
-        </Freeze>
+        </Sequence>
         <Scan />
       </Sequence>
 
