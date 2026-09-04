@@ -95,6 +95,8 @@ date,order,type,vo,text,accent,head,to,total,caption,value,suffix,label,source,t
 | `comp` | `title`, `lines`, `sub?`, **`source`** | levels.fyi-style band. `lines` = `Base\|$185,000` one per line (a `Total` row is drawn larger); `sub` = the counter-offer delta, in orange. |
 | `terminal` | `title?`, `head?`, `lines` | ChatGPT-style answer filling in live. `head` is the user bubble (default: "Pasted my resume and the job description."); `lines` is the answer, ≤620 chars. `*stars*` turn orange. **This is the format for the demo-only prompts.** |
 
+**Every video opens the same way: a hook, then a framing scene.** The hook (scene 1, under 2.5s spoken) earns the stop. Scene 2 is a second `hook` row with `head` = `60-SECOND FIX · US TECH JOBS`, `text` = `THIS IS WHY. AND THE FREE PROMPT THAT FIXES IT.`, and a `vo` that says who this is for, what they are about to get, and that the prompt at the end is free — because a cold viewer has no idea what they are watching. Then the lesson, then the CTA. Captions run under the framing scene automatically because its voice says more than its card.
+
 Every scene cuts in on an orange scan wipe. Captions sit above the YouTube UI zone (`SAFE_BOTTOM` in `src/theme.js`) and switch off automatically on `hook` and `cta`.
 
 Adding a scene type: one component in `src/scenes/`, one line in `SCENES` in `src/scenes/index.jsx`, one mapping in `TYPES` in `scripts/sheet.mjs`, one line in `REQUIRED` in `scripts/lint.mjs`.
@@ -134,7 +136,7 @@ On by default for every `hook`, `test`, `stat`, `rank` and `cta` scene. With `PI
 - A blank `photo` cell uses the default term for that scene type from `photos` in `content/links.json`, written as `term @category` (`keyboard macro dark @computer`). The category is Pixabay's own and is the only thing that keeps a fish out of a keyboard search. The pick rotates by date so consecutive videos don't share a photo.
 - Put your own term, `term @category`, or a numeric Pixabay image id in the cell to override. `none` switches it off for that scene.
 - Card scenes (`prompt`, `terminal`, `posting`, `rejection`, `comp`, `market`) never get one. The card is the frame.
-- **Objects only, never people.** The channel is faceless and a stock face is still a face. Defaults are buildings, keyboards, circuit boards and paper. Check `npm run stills` before a new term goes into rotation.
+- **Objects only, never people.** The channel is faceless and a stock face is still a face. Every hit's Pixabay tag list is checked against a people list (`man`, `woman`, `hand`, `portrait`, `team`…) and rejected on any match, before relevance or rotation. The build log prints each pick's tags; if a term keeps producing rejections, change the term.
 
 ## The scheduled version
 
