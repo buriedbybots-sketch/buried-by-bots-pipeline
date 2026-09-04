@@ -27,7 +27,7 @@ Mix a few styles: straightforward,
 value-focused, and one with a bit of
 personality.",,,,,,,,
 2026-08-29,5,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,,PACK,,,,,,
-2026-08-30,1,hook,They already told you the interview questions.,THEY ALREADY TOLD YOU THE INTERVIEW QUESTIONS.,ALREADY,,,,,,,,,,,,,,,,,,
+2026-08-30,1,hook,The recruiter already told you the interview questions.,THE RECRUITER ALREADY TOLD YOU THE INTERVIEW QUESTIONS.,ALREADY,,,,,,,,,,,,,,,,,,
 2026-08-30,2,hook,It's called the job description.,IT'S CALLED THE JOB DESCRIPTION.,DESCRIPTION,,,,,,,,,,,,,,,,,,
 2026-08-30,3,test,Go back to the posting and read the requirements section again. Every single line in there is something a human has to check in the room.,READ THE REQUIREMENTS SECTION AGAIN,,30-SECOND TEST,,,,,,EVERY BULLET IS A QUESTION THEY HAVE TO ASK,,,,,,,,,,,
 2026-08-30,4,prompt,"This turns the posting into the actual question list, and tells you what each one is really testing.",,,,,,,,,,,PROMPT 16 — THE LIKELY-QUESTIONS GENERATOR,"You are the hiring manager for this role.
@@ -54,7 +54,7 @@ transactional.",,,,,,,,
 2026-08-31,5,cta,Four more like it in the free pack. Comment the word pack and I'll send it.,FREE PROMPT PACK,,,,,,,,,,,,,PACK,,,,,,
 2026-09-01,1,hook,You have the story. You just don't have it in the shape they score.,YOU HAVE THE STORY. NOT IN THE SHAPE THEY SCORE.,SHAPE,,,,,,,,,,,,,,,,,,
 2026-09-01,2,test,"Try it right now. Say your best work story out loud and time it. If you went past ninety seconds, they stopped listening somewhere in the middle.",SAY YOUR BEST WORK STORY OUT LOUD. TIME IT.,,90-SECOND TEST,,,,,,PAST 90 SECONDS? THEY STOPPED LISTENING,,,,,,,,,,,
-2026-09-01,3,hook,"Situation, task, action, result. Under ninety seconds, with a number at the end. That's the rubric they're scoring against.",SITUATION. TASK. ACTION. RESULT.,RESULT,,,,,,,,,,,,,,,,,,
+2026-09-01,3,hook,"Situation, task, action, result. Under ninety seconds, with a number at the end. That's the behavioral rubric they're scoring against.",SITUATION. TASK. ACTION. RESULT.,RESULT,,,,,,,,,,,,,,,,,,
 2026-09-01,4,prompt,"This builds it from the messy version, and if there's no real result it asks you a question instead of inventing one.",,,,,,,,,,,PROMPT 17 — THE STAR STORY BUILDER,"Help me build a STAR-method answer
 (Situation, Task, Action, Result) from the
 rough story below. Keep it under 90 seconds
