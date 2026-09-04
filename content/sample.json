@@ -1,7 +1,21 @@
 {
   "id": "sample",
   "title": "You weren't rejected. You were ranked #340.",
-  "music": null,
+  "description": "The ATS did not reject you. It ranked you, and a human only ever looks at page one. Prompt 5 of 25 from the free pack.",
+  "hashtags": [
+    "#resumetips",
+    "#atsresume",
+    "#jobsearch2026"
+  ],
+  "music": "pulse.wav",
+  "caption": "Nobody rejected you. You were ranked #340 of 400 and a human only ever looks at page one.\n\n43% of parsing failures are formatting, not content (ResumeAdapter, 10k scans, Q1 2026).\n\nPrompt 5 of 25. Comment PACK and I will send you the free five.",
+  "pinned": "Free 5-prompt pack (no upsell in it): [LEAD MAGNET LINK]",
+  "seed": "Nobody rejected you. You were ranked #340 of 400, and a human only ever looks at page one.",
+  "communities": [
+    "r/resumes",
+    "r/cscareerquestions",
+    "r/recruitinghell"
+  ],
   "scenes": [
     {
       "type": "hook",
@@ -60,13 +74,5 @@
       "text": "FREE PROMPT PACK",
       "keyword": "PACK"
     }
-  ],
-  "caption": "Nobody rejected you. You were ranked #340 of 400 and a human only ever looks at page one.\n\n43% of parsing failures are formatting, not content (ResumeAdapter, 10k scans, Q1 2026).\n\nPrompt 5 of 25. Comment PACK and I will send you the free five.",
-  "pinned": "Free 5-prompt pack (no upsell in it): [LEAD MAGNET LINK]",
-  "description": "The ATS did not reject you. It ranked you, and a human only ever looks at page one. Prompt 5 of 25 from the free pack.",
-  "hashtags": [
-    "#resumetips",
-    "#atsresume",
-    "#jobsearch2026"
   ]
 }

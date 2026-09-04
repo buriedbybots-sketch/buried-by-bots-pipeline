@@ -2,5 +2,23 @@
   "leadMagnet": "https://unfairedge.gumroad.com/l/atspack",
   "product": "https://unfairedge.gumroad.com/l/zpydx",
   "keyword": "PACK",
-  "_note": "The link lives here and nowhere else. build.mjs substitutes it into every video's description, pinned comment and caption, so changing it once changes every video from then on. Paste the free $0 Gumroad product URL into leadMagnet when it exists."
+  "_note": "The link lives here and nowhere else. build.mjs substitutes it into every video's description, pinned comment and caption, so changing it once changes every video from then on. Paste the free $0 Gumroad product URL into leadMagnet when it exists.",
+  "baseTags": [
+    "ats resume",
+    "applicant tracking system",
+    "tech job search",
+    "software engineer jobs",
+    "resume keywords",
+    "job search 2026",
+    "tech layoffs",
+    "faang recruiting",
+    "tech interview",
+    "new grad jobs"
+  ],
+  "communities": [
+    "r/cscareerquestions",
+    "r/resumes",
+    "r/recruitinghell"
+  ],
+  "_note2": "baseTags are merged after each video's own hashtags into the YouTube tags, inside the 500-char cap. communities is the default seeding-pack trio when the sheet row leaves `communities` blank."
 }

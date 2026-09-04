@@ -1,0 +1,93 @@
+{
+  "id": "showcase",
+  "title": "Senior SWE, $185k base, remote. Rejected at 4:12 AM.",
+  "description": "Every artifact scene in the pipeline in one video. Illustrative numbers — real rows cite a source on every one.",
+  "hashtags": [
+    "#techjobs",
+    "#softwareengineer",
+    "#jobsearch2026"
+  ],
+  "music": "pulse.wav",
+  "caption": "The req said Kubernetes three times. Your resume said it zero times.\n\nComment PACK and I'll send you the free five.",
+  "pinned": "Free 5-prompt pack, no upsell in it: [LEAD MAGNET LINK]",
+  "seed": "The req said Kubernetes three times. The resume said it zero times.",
+  "communities": [
+    "r/cscareerquestions",
+    "r/ExperiencedDevs",
+    "r/recruitinghell"
+  ],
+  "scenes": [
+    {
+      "type": "hook",
+      "vo": "This is the req you applied to.",
+      "text": "THIS IS THE REQ YOU APPLIED TO.",
+      "accent": "REQ"
+    },
+    {
+      "type": "posting",
+      "vo": "Senior backend engineer, San Francisco or remote in the US, one eighty five to two twenty base. Four requirements. Two of them are the whole interview.",
+      "title": "Senior Software Engineer, Backend",
+      "company": "Northwind",
+      "location": "San Francisco, CA · Remote (US)",
+      "pay": "$185,000 – $220,000",
+      "lines": [
+        "*5+ years building distributed systems in Go or Java*",
+        "Experience with Kubernetes and AWS",
+        "*Owned on-call for a production service*",
+        "BS in CS or equivalent experience"
+      ],
+      "source": "illustrative req — real rows cite the posting"
+    },
+    {
+      "type": "rejection",
+      "vo": "And this is what came back. Tuesday, four twelve in the morning. Nobody was awake. Nobody read it.",
+      "company": "Northwind",
+      "time": "Tue 4:12 AM"
+    },
+    {
+      "type": "market",
+      "vo": "Meanwhile, general software openings are down forty nine percent against February twenty twenty. Machine learning openings are up fifty nine.",
+      "label": "US job postings vs Feb 2020",
+      "lines": [
+        "General software engineering|-49",
+        "ML engineer|+59"
+      ],
+      "source": "FinalRound AI, SWE job market 2026"
+    },
+    {
+      "type": "comp",
+      "vo": "Same level, same city, one competing offer. That's the difference on the base line alone.",
+      "title": "L4 · Software Engineer · San Francisco",
+      "lines": [
+        "Base|$185,000",
+        "Stock|$120,000 /yr",
+        "Bonus|$25,000",
+        "Total|$330,000"
+      ],
+      "sub": "+$38,000 base with one competing offer",
+      "source": "illustrative band — real rows cite levels.fyi"
+    },
+    {
+      "type": "terminal",
+      "vo": "So paste the req and the resume in together, and let it find the gap for you. Kubernetes, three times in the req. Zero times on the page.",
+      "title": "ChatGPT",
+      "head": "Pasted my resume and the Northwind job description.",
+      "lines": [
+        "Missing from your resume (in the req 3×):",
+        "- *Kubernetes* — you ran it at Acme; it's not on the page",
+        "- *on-call* — the req says it twice, you say \"maintained\"",
+        "- *Go* — under skills only, no bullet uses it",
+        "",
+        "Rewrite for bullet 2:",
+        "\"Owned on-call for a Go service on Kubernetes,",
+        "40k rps, zero SEV-1s in 14 months.\""
+      ]
+    },
+    {
+      "type": "cta",
+      "vo": "Five prompts that do this, free. Comment the word pack and I'll send it.",
+      "text": "FREE PROMPT PACK",
+      "keyword": "PACK"
+    }
+  ]
+}
