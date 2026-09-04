@@ -10,6 +10,20 @@ import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs';
 
 // Blank cell → the default term for the scene type from links.json. `none` →
 // no backdrop. Card scenes have no default: the card is the frame.
+// Matched against Pixabay's comma-separated tag list, tag by tag.
+const PEOPLE = new Set([
+  'man', 'men', 'woman', 'women', 'people', 'person', 'persons', 'girl', 'girls', 'boy', 'boys', 'face', 'faces',
+  'portrait', 'model', 'businessman', 'businesswoman', 'business people', 'business man', 'business woman', 'hand',
+  'hands', 'finger', 'fingers', 'child', 'children', 'kid', 'kids', 'baby', 'human', 'worker', 'workers', 'employee',
+  'student', 'students', 'adult', 'lady', 'guy', 'female', 'male', 'body', 'selfie', 'couple', 'family', 'team',
+  'crowd', 'silhouette', 'smile', 'eyes', 'hair', 'beard', 'boss', 'writing', 'typing', 'work', 'office worker',
+]);
+const hasPerson = (tags) =>
+  String(tags || '')
+    .split(',')
+    .map((t) => t.trim().toLowerCase())
+    .some((t) => PEOPLE.has(t));
+
 const defaults = () => JSON.parse(readFileSync('content/links.json', 'utf8')).photos || {};
 
 export const fetchPhotos = async (content) => {
@@ -35,7 +49,7 @@ export const fetchPhotos = async (content) => {
     // only lever that keeps a fish out of a "keyboard" search and a face out
     // of a "phone" search. Relevance falls off fast past the first few hits,
     // so only the top 6 are candidates.
-    const q = new URLSearchParams({key, image_type: 'photo', orientation: 'vertical', safesearch: 'true', per_page: '6'});
+    const q = new URLSearchParams({key, image_type: 'photo', orientation: 'vertical', safesearch: 'true', per_page: '20'});
     const [term, category] = String(scene.photo).split('@').map((x) => x.trim());
     if (/^\d+$/.test(term)) q.set('id', term);
     else {
@@ -46,7 +60,13 @@ export const fetchPhotos = async (content) => {
     if (!res.ok) throw new Error(`pixabay: ${res.status} ${await res.text()}`);
     // Same search term every day would mean the same photo every day. Pick
     // from the top hits by a hash of the video id so each date lands elsewhere.
-    const hits = (await res.json()).hits || [];
+    // The channel is faceless. Pixabay tags every image; any tag that names a
+    // person rejects it, before relevance or rotation get a say. This is the
+    // guard that matters — a category filter alone let a man reading a resume
+    // through on a "documents" search.
+    const all = (await res.json()).hits || [];
+    const hits = all.filter((h) => !hasPerson(h.tags)).slice(0, 6);
+    if (all.length && !hits.length) console.warn(`  ⚠ scene ${i + 1}: every hit for "${scene.photo}" is tagged with a person — pick a different term`);
     const seed = [...content.id].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, i + 7);
     const hit = hits.length ? hits[seed % hits.length] : null;
     if (!hit) {
@@ -58,6 +78,6 @@ export const fetchPhotos = async (content) => {
     // backdrop that is blurred and dimmed anyway.
     const img = await fetch(hit.largeImageURL);
     writeFileSync(`public/${file}`, Buffer.from(await img.arrayBuffer()));
-    console.log(`  photo ${i + 1}: pixabay #${hit.id} by ${hit.user} → ${file}`);
+    console.log(`  photo ${i + 1}: pixabay #${hit.id} by ${hit.user} [${hit.tags}] → ${file}`);
   }
 };

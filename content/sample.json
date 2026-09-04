@@ -24,6 +24,13 @@
       "accent": "RANKED"
     },
     {
+      "type": "hook",
+      "vo": "Applying to software jobs in the US and hearing nothing back? This is why, and the free prompt that fixes your resume.",
+      "head": "60-SECOND FIX · US TECH JOBS",
+      "text": "THIS IS WHY. AND THE FREE PROMPT THAT FIXES IT.",
+      "accent": "FIXES"
+    },
+    {
       "type": "rank",
       "vo": "A recruiter with four hundred applicants doesn't read four hundred resumes. They search three keywords, get a ranked list, and work down from the top. You came back at three forty.",
       "to": 340,
