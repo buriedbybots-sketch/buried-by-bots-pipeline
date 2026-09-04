@@ -39,4 +39,4 @@ for (const date of dates) {
 console.log(`\n${'='.repeat(52)}`);
 console.log(`rendered ${done.length}: ${done.join(', ') || '—'}`);
 if (failed.length) console.log(`failed ${failed.length}: ${failed.join(', ')}`);
-console.log(`\nEach one is in out/ as .mp4 + .cover.jpg + .post.txt`);
+console.log(`\nEach one is in out/ as .mp4 + .cover.jpg + .post.txt + .meta.json`);
