@@ -1,14 +1,18 @@
 // One command per video:  npm run build -- 2026-08-28
 // Lints, voices, guards, renders. Reads content/<id>.json, writes out/<id>.*
-import {execFileSync} from 'node:child_process';
+import {execSync} from 'node:child_process';
 import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs';
 import {enforce} from './lint.mjs';
 import {fetchPhotos} from './lib/photo.mjs';
 
+// Local secrets (PIXABAY_KEY) live in a gitignored .env; CI gets them from
+// GitHub Secrets. Node 20.12+ reads the file natively — nothing to install.
+if (existsSync('.env')) process.loadEnvFile('.env');
+
 // Content ids are dates in the scheduled pipeline, so today is the right default.
 const id = process.argv[2] || new Date().toISOString().slice(0, 10);
 
-const run = (cmd, args) => execFileSync(cmd, args, {stdio: 'inherit', shell: true});
+const run = (cmd, args) => execSync([cmd, ...args].join(' '), {stdio: 'inherit'});
 const fail = (msg) => {
   console.error(`\n${msg}`);
   process.exit(1);

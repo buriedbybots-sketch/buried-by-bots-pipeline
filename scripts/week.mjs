@@ -3,7 +3,7 @@
 // Pulls each day's row from the sheet and builds it. Skips days the sheet
 // doesn't have, and keeps going if one day fails, so a single bad row can't
 // cost you the other six.
-import {execFileSync} from 'node:child_process';
+import {execSync} from 'node:child_process';
 import {existsSync} from 'node:fs';
 
 const start = process.argv[2] || new Date().toISOString().slice(0, 10);
@@ -15,7 +15,7 @@ const dates = Array.from({length: days}, (_, i) => {
   return d.toISOString().slice(0, 10);
 });
 
-const run = (cmd, args) => execFileSync(cmd, args, {stdio: 'inherit', shell: true});
+const run = (cmd, args) => execSync([cmd, ...args].join(' '), {stdio: 'inherit'});
 const done = [];
 const failed = [];
 

@@ -5,7 +5,7 @@
 //
 // Needs out/<id>.props.json, which build.mjs writes before it renders — so
 // run the build once (or let it fail at the render) and this works after.
-import {execFileSync} from 'node:child_process';
+import {execSync} from 'node:child_process';
 import {mkdirSync, readFileSync} from 'node:fs';
 
 const id = process.argv[2] || 'sample';
@@ -19,10 +19,7 @@ let from = 0;
 content.scenes.forEach((scene, i) => {
   const frame = from + Math.min(at, lens[i] - 1);
   const file = `out/stills/${id}-${i + 1}-${scene.type}.jpg`;
-  execFileSync('npx', ['remotion', 'still', 'src/index.jsx', 'Short', file, `--frame=${frame}`, `--props=out/${id}.props.json`], {
-    stdio: 'ignore',
-    shell: true,
-  });
+  execSync(`npx remotion still src/index.jsx Short ${file} --frame=${frame} --props=out/${id}.props.json`, {stdio: 'ignore'});
   console.log(`${file}  (frame ${frame})`);
   from += lens[i];
 });

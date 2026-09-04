@@ -16,3 +16,6 @@ content/protected.txt
 
 # fetched from Pixabay at build time when a scene names a photo
 public/photos/
+
+# local secrets, loaded by build.mjs when present. Never tracked; CI uses GitHub Secrets.
+.env
