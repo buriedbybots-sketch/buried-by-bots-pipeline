@@ -86,7 +86,7 @@ export const US_TOPIC = [
   'take-home', 'system design', 'behavioral', 'resume', 'resumes', 'ats', 'applicant tracking', 'req',
 ];
 
-// Vault Prompts 1, 2, 3 and 26 are demo-only: show the output (terminal
+// Vault Prompts 1, 2, 3 and 26-30 are demo-only: show the output (terminal
 // scene), never the prompt text. Two guards. A `prompt` scene titled after
 // one of them is refused outright. And content/protected.json — hashed
 // 8-word shingles of the actual prompt text, made once with
@@ -94,7 +94,7 @@ export const US_TOPIC = [
 // refuses any run of that text, spoken or on screen, in any scene type.
 // In CI the fingerprint file is mandatory: without it the hardest content
 // rule is unenforced exactly where publishing happens.
-const PROTECTED_TITLE = /\bprompt\s*#?\s*(?:0?1|0?2|0?3|26)\b(?![\d.])/i;
+const PROTECTED_TITLE = /\bprompt\s*#?\s*(?:0?1|0?2|0?3|26|27|28|29|30)\b(?![\d.])/i;
 const PROTECTED_FILE = 'content/protected.json';
 
 // What each scene type has to carry to render at all, plus which ones show a
@@ -175,7 +175,7 @@ export const lint = (content, {protectedHashes, ci = false, keyword = linksKeywo
       errors.push(`${tag}: shows a pay band but has no source — no number on screen without one`);
     }
     if (s.type === 'prompt' && PROTECTED_TITLE.test(s.title || '')) {
-      errors.push(`${tag}: "${s.title}" — Vault 1/2/3/26 are demo-only. Use a terminal scene and show the output.`);
+      errors.push(`${tag}: "${s.title}" — Vault 1/2/3 and 26-30 are demo-only. Use a terminal scene and show the output.`);
     }
     if (s.type === 'terminal' && (s.lines || []).join('\n').length > 620) {
       warnings.push(`${tag}: output is over 620 characters and will run off the card — trim it`);
@@ -229,7 +229,7 @@ export const lint = (content, {protectedHashes, ci = false, keyword = linksKeywo
     const bad = new Set(protectedHashes);
     const check = (label, text) => {
       for (const sh of shingles(text)) {
-        if (bad.has(digest(sh))) return errors.push(`${label} contains Vault 1/2/3/26 prompt text ("${sh}…") — demo-only, show the output instead`);
+        if (bad.has(digest(sh))) return errors.push(`${label} contains protected Vault prompt text ("${sh}…") — demo-only, show the output instead`);
       }
     };
     scenes.forEach((s, i) => {
@@ -239,7 +239,7 @@ export const lint = (content, {protectedHashes, ci = false, keyword = linksKeywo
     check('post copy', copy);
   } else {
     (ci ? errors : warnings).push(
-      `${PROTECTED_FILE} is missing — Vault 1/2/3/26 text is unguarded. Run: node scripts/protect.mjs <file with the four prompts>`
+      `${PROTECTED_FILE} is missing — protected Vault text is unguarded. Run: node scripts/protect.mjs <file with prompts 1, 2, 3 and 26-30>`
     );
   }
 
