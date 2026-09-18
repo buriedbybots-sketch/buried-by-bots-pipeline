@@ -2,7 +2,7 @@
 
 Motion-graphics vertical video for `@buriedbybots`. One sheet row in, one 1080x1920 MP4 out, voiced, captioned, uploaded, and delivered to a phone with everything needed to post the Reel and seed the first hour.
 
-The channel sells **Hired by AI** ($19) to **US tech job seekers**. The operator is not in the US. So the pipeline's job is not "get views" — it is to make videos that a US software engineer stops on and everyone else scrolls past, and then to measure whether that is happening. Every design choice below follows from that.
+The channel sells **Hired by AI** ($39) to **US tech job seekers**. The operator is not in the US. So the pipeline's job is not "get views" — it is to make videos that a US software engineer stops on and everyone else scrolls past, and then to measure whether that is happening. Every design choice below follows from that.
 
 ## Run it
 
