@@ -11,7 +11,8 @@
     "week": "node scripts/week.mjs",
     "geo": "node scripts/geo.mjs",
     "sales": "node scripts/sales.mjs",
-    "protect": "node scripts/protect.mjs"
+    "protect": "node scripts/protect.mjs",
+    "redate": "node scripts/redate.mjs"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.0",
